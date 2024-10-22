@@ -22,7 +22,7 @@ log() {
 
 update_pakages() {
   log "Update and upgrade packages"
-  sudo apt-get -q update && apt-get -yq upgrade
+  sudo apt-get -q update && sudo apt-get -yq upgrade
   # Installing Complete Multimedia Support 
   sudo apt-get -yq install ubuntu-restricted-extras 
 }
@@ -60,15 +60,15 @@ EOF
 
   # https://github.com/zsh-users/zsh-autosuggestions
   printf "%s\n" "Install commands autocompletition"
-  sudo git clone https://github.com/zsh-users/zsh-autosuggestions ${SHARE_FOLDER}/zsh/zsh-autosuggestions
-  echo "source ${SHARE_FOLDER}/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh" >> "${ZDOTDIR:-$HOME}/.zshrc"
+  sudo git clone https://github.com/zsh-users/zsh-autosuggestions ${SHARE_FOLDER}/zsh-autosuggestions
+  echo "source ${SHARE_FOLDER}/zsh-autosuggestions/zsh-autosuggestions.zsh" >> "${ZDOTDIR:-$HOME}/.zshrc"
 
   # Enable highliting whilst they are typed at a zsh.
   # This helps in reviewing commands before running them.
   # https://github.com/zsh-users/zsh-syntax-highlighting
   printf "%s\n" "Install commands highlighting."
-  sudo git clone https://github.com/zsh-users/zsh-syntax-highlighting ${SHARE_FOLDER}/zsh/zsh-syntax-highlighting
-  echo "source ${SHARE_FOLDER}/zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >> "${ZDOTDIR:-$HOME}/.zshrc"
+  sudo git clone https://github.com/zsh-users/zsh-syntax-highlighting ${SHARE_FOLDER}/zsh-syntax-highlighting
+  echo "source ${SHARE_FOLDER}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >> "${ZDOTDIR:-$HOME}/.zshrc"
 }
 
 install_rust() {
@@ -158,6 +158,33 @@ setup_tui() {
   snap install btop
 }
 
+# https://docs.docker.com/engine/install/ubuntu/
+install_docker() {
+  log "Install Docker"
+  # Uninstall any conflicting packages:
+  for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc;
+    do sudo apt-get remove $pkg; 
+  done
+
+  # Add Docker's official GPG key:
+  sudo apt-get update
+  sudo apt-get -yq install ca-certificates curl
+  sudo install -myq 0755 -d /etc/apt/keyrings
+  sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+  sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+  # Add the repository to Apt sources:
+  echo \
+    "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+    $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+    sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+  sudo apt-get update
+
+  # Install the Docker packages:
+  sudo apt-get -yq install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+  docker -v
+}
+
 install_nerd_fonts() {
   log "Install Nerd Fonts"
   git clone --filter=blob:none --sparse git@github.com:ryanoasis/nerd-fonts
@@ -165,13 +192,6 @@ install_nerd_fonts() {
   git sparse-checkout add patched-fonts/JetBrainsMono
   bash install.sh JetBrainsMono
   cd .. && rm -rf nerd-fonts
-}
-
-install_gui() {
-  log "Install GUI application"
-  snap install \
-    telegram-desktop \
-    postman
 }
 
 clean_trash() {
@@ -187,8 +207,8 @@ main() {
   setup_toolcahins
   setup_neovim
   setup_tui
+  install_docker
   install_nerd_fonts
-  install_gui
   clean_trash
 }
 
@@ -196,6 +216,4 @@ main
 # TODO:
 # - setup git config --global user.name & user.email
 # - setup ssh key and publish public key on github
-# - Try flatpack
-# - Personalyze workstation
 # - Battary optimization
