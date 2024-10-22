@@ -362,21 +362,19 @@ setup_desktop_components() {
 }
 
 download_fonts() {
-  log_info "Download Inter fonts."
-  wget -q -O Inter.zip https://github.com/rsms/inter/releases/download/v4.0/Inter-4.0.zip
-  mkdir -p "${HOME}/.local/share/fonts/Inter"
-  unzip -qq Inter.zip -d "${HOME}/.local/share/fonts/Inter" Inter.ttc InterVariable.ttf InterVariable-Italic.ttf
-  rm Inter.zip
+  log_info "Download San Francisco fonts."
+  wget -q -O SF_Pro.dmg https://devimages-cdn.apple.com/design/resources/download/SF-Pro.dmg
+  mkdir -p "${HOME}/.local/share/fonts/SF_Pro"
+  7z x SF_Pro.dmg
 }
 
 setup_desktop_fonts() {
   download_fonts
-  log_info "Setup Inter fonts as desktop font."
-  dconf write /org/gnome/desktop/interface/font-name "'Inter Display 11'"
-  dconf write /org/gnome/desktop/interface/document-font-name "'Inter 11'"
+  log "Setup San Francisco fonts as desktop font"
+  dconf write /org/gnome/desktop/interface/font-name "'SF Pro Display 11'"
+  dconf write /org/gnome/desktop/interface/document-font-name "'SF Pro Text 11'"
   dconf write /org/gnome/desktop/interface/monospace-font-name "'JetBrainsMono Nerd Font 13'"
-  dconf write /org/gnome/desktop/wm/preferences/titlebar-font "'Inter Bold 11'"
-  dconf write /org/gnome/desktop/wm/preferences/titlebar-font "'Inter Display 11'"
+  dconf write /org/gnome/desktop/wm/preferences/titlebar-font "'SF Pro Display 11'"
 }
 
 setup_input_options() {
