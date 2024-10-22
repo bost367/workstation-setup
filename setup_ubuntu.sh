@@ -194,6 +194,20 @@ install_nerd_fonts() {
   cd .. && rm -rf nerd-fonts
 }
 
+install_flatpak() {
+  log "Install Flatpak"
+  sudo apt-get -yq install flatpak
+  sudo apt-get -yq install gnome-software-plugin-flatpak
+  flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+}
+
+install_desktop_applications() {
+  log "Install Desktop application"
+  flatpak install -y flathub org.telegram.desktop
+  flatpak install -y flathub com.getpostman.Postman
+  flatpak install -y flathub md.obsidian.Obsidian
+}
+
 clean_trash() {
   sudo apt-get autoclean
   sudo apt-get clean -yq
@@ -209,6 +223,8 @@ main() {
   setup_tui
   install_docker
   install_nerd_fonts
+  install_flatpak
+  install_desktop_applications
   clean_trash
 }
 
