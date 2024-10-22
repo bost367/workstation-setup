@@ -229,6 +229,28 @@ install_desktop_applications() {
   flatpak install -y flathub md.obsidian.Obsidian
 }
 
+personalyze_workstation() {
+  log "Personalyze ui desktop"
+  # Switch dark theme
+  dconf write /org/gnome/desktop/interface/color-scheme "'prefer-dark'"
+  dconf write /org/gnome/desktop/interface/gtk-theme "'Yaru-blue-dark'"
+  dconf write /org/gnome/desktop/interface/icon-theme "'Yaru-blue'"
+  # Dock panel
+  dconf write /org/gnome/shell/extensions/dash-to-dock/dock-position "'BOTTOM'"
+  dconf write /org/gnome/shell/extensions/dash-to-dock/dash-max-icon-size 48
+  dconf write /org/gnome/shell/extensions/dash-to-dock/show-mounts true
+  dconf write /org/gnome/shell/extensions/dash-to-dock/show-mounts-network true
+  # File explorer
+  dconf write /org/gnome/nautilus/icon-view/default-zoom-level "'small'"
+  dconf write /org/gnome/nautilus/preferences/show-hidden-files true
+  # Desktop
+  dconf write /org/gnome/shell/extensions/ding "'tiny'"
+  dconf write /org/gnome/shell/extensions/ding/show-home false
+  dconf write /org/gnome/shell/extensions/ding/start-corner "'top-right'"
+  # Mouse speed. May be different from PC to PC.
+  dconf write /org/gnome/desktop/peripherals/mouse/speed -0.67
+}
+
 clean_trash() {
   sudo apt-get autoclean
   sudo apt-get clean -yq
@@ -246,6 +268,7 @@ main() {
   install_nerd_fonts
   install_flatpak
   install_desktop_applications
+  personalyze_workstation
   clean_trash
 }
 
