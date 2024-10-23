@@ -4,6 +4,16 @@ export PATH="$PATH:$HOME/.cargo/bin"
 export PATH="$PATH:/usr/local/go/bin"
 export XDG_CONFIG_HOME="$HOME/.config"
 export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
+export INSTALLED_VERSIONS=""
+
+append_version() {
+  INSTALLED_VERSIONS+="$1\n..........\n"
+}
+
+print_version() {
+  log "Installed tools:"
+  echo -e "$INSTALLED_VERSIONS"
+}
 
 setup_color() {
   FMT_YELLOW=$(printf '\033[33m')
@@ -34,6 +44,9 @@ setup_required_cli() {
     curl \
     git \
     wget
+
+  # wget and curl has verbose output on `--version` command.
+  append_version "$(git --version)"
 }
 
 setup_zsh() {
@@ -69,6 +82,8 @@ EOF
   printf "%s\n" "Install commands highlighting."
   sudo git clone https://github.com/zsh-users/zsh-syntax-highlighting ${SHARE_FOLDER}/zsh-syntax-highlighting
   echo "source ${SHARE_FOLDER}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >>"${ZDOTDIR:-$HOME}/.zshrc"
+
+  append_version "$(zsh --version)"
 }
 
 install_rust() {
@@ -80,7 +95,9 @@ install_rust() {
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
   fi
   rustup update
-  rustup -V
+
+  append_version "$(rustup --version)"
+  append_version "$(cargo --version)"
 }
 
 install_golang() {
@@ -97,7 +114,8 @@ install_golang() {
 
   printf "%s\n" "Remove binary"
   rm "${GOLANG_FILE}"
-  go version
+
+  append_version "$(go version)"
 }
 
 install_java() {
@@ -105,18 +123,19 @@ install_java() {
   curl -s "https://get.sdkman.io" | bash
   source "$HOME/.sdkman/bin/sdkman-init.sh"
 
-  log "Install Java."
+  log "Install Java (21.0.5-tem)."
   sdk install java 21.0.5-tem
 
-  sdk version
-  java --version
+  append_version "$(sdk version)"
+  append_version "$(java --version)"
 }
 
 install_nodejs() {
   log "Install Nodejs and npm."
   sudo apt-get -yqq install nodejs
   sudo apt-get -yqq install npm
-  npm version
+
+  append_version "$(npm version)"
 }
 
 # Such toolchains requires bash/zsh file modification.
@@ -133,19 +152,24 @@ setup_neovim() {
   log "Install Neovim setup"
   # apt insltlls old verion of vim. snap conteins fresh release.
   snap install --classic nvim
+  append_version "$(nvim --version)"
 
   # Used by Nvim to share OS and Nvim buffers.
   # For more details run `:h clipboard` in nvim.
   sudo apt-get -yq install xclip
+  append_version "$(xmllint --version)"
 
   # Shell linter. Used by bash-language-server.
   sudo apt-get -yq install shellcheck
+  append_version "$(shellcheck --version)"
   # Shell formatter.
   go install mvdan.cc/sh/v3/cmd/shfmt@latest
   # Lua formatter.
   cargo -q install --locked stylua
+  append_version "$(stylua --version)"
   # YAML file formatter.
   go install github.com/mikefarah/yq/v4@latest
+  append_version "$(yq --version)"
 }
 
 setup_tui() {
@@ -153,30 +177,38 @@ setup_tui() {
 
   printf "%s\n" "Install yazi - filemanager"
   cargo -q install --locked yazi-fm yazi-cli
+  append_version "$(yazi --version)"
 
   printf "%s\n" "Install zellij - terminal splitter"
   cargo -q install --locked zellij
+  append_version "$(zellij --version)"
 
   printf "%s\n" "Install eza - better ls"
   cargo -q install --locked eza
+  append_version "$(eza --version)"
 
   printf "%s\n" "Install starship - beautify prompt for terminal input"
   cargo -q install --locked starship
+  append_version "$(starship --version)"
 
   printf "%s\n" "Install git-delta - side by side diff view fo lazygit"
   cargo -q install --locked git-delta
 
   printf "%s\n" "Install lazygit"
   go install github.com/jesseduffield/lazygit@latest
+  append_version "$(lazygit --version)"
 
   printf "%s\n" "Install lazydocker"
   go install github.com/jesseduffield/lazydocker@latest
+  append_version "$(lazydocker --version)"
 
   printf "%s\n" "Install alacritty"
   snap install --classic alacritty
+  append_version "$(alacritty --version)"
 
   printf "%s\n" "Install btop - better htop"
   snap install btop
+  append_version "$(btop --version)"
 }
 
 # https://docs.docker.com/engine/install/ubuntu/
@@ -203,7 +235,7 @@ install_docker() {
 
   # Install the Docker packages:
   sudo apt-get -yq install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-  docker -v
+  append_version "$(docker --version)"
 }
 
 install_nerd_fonts() {
@@ -241,7 +273,7 @@ seup_desktop_fonts() {
   dconf write /org/gnome/desktop/interface/document-font-name "'Inter 11'"
   dconf write /org/gnome/desktop/interface/monospace-font-name "'JetBrainsMono Nerd Font 13'"
   dconf write /org/gnome/desktop/wm/preferences/titlebar-font "'Inter Bold 11'"
-  dconf write /org/gnome/desktop/wm/preferences/titlebar-font "'SF Pro Display 11'"
+  dconf write /org/gnome/desktop/wm/preferences/titlebar-font "'Inter Display 11'"
 }
 
 personalyze_workstation() {
@@ -286,6 +318,7 @@ main() {
   install_desktop_applications
   personalyze_workstation
   clean_trash
+  print_version
 }
 
 main
