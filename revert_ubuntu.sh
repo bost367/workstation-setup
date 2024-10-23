@@ -1,3 +1,5 @@
+#!/bin/bash
+
 export PATH="$PATH:$HOME/.cargo/bin"
 
 rm -rf ~/.local/share/fonts
