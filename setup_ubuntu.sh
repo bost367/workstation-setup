@@ -12,7 +12,7 @@ setup_color() {
 }
 
 check_cmd() {
-  command -v "$1" > /dev/null 2>&1
+  command -v "$1" >/dev/null 2>&1
 }
 
 log() {
@@ -23,8 +23,8 @@ log() {
 update_pakages() {
   log "Update and upgrade packages"
   sudo apt-get -q update && sudo apt-get -yq upgrade
-  # Installing Complete Multimedia Support 
-  sudo apt-get -yq install ubuntu-restricted-extras 
+  # Installing Complete Multimedia Support
+  sudo apt-get -yq install ubuntu-restricted-extras
 }
 
 # Need to be install primarily: the required by other tools.
@@ -61,18 +61,18 @@ EOF
   # https://github.com/zsh-users/zsh-autosuggestions
   printf "%s\n" "Install commands autocompletition"
   sudo git clone https://github.com/zsh-users/zsh-autosuggestions ${SHARE_FOLDER}/zsh-autosuggestions
-  echo "source ${SHARE_FOLDER}/zsh-autosuggestions/zsh-autosuggestions.zsh" >> "${ZDOTDIR:-$HOME}/.zshrc"
+  echo "source ${SHARE_FOLDER}/zsh-autosuggestions/zsh-autosuggestions.zsh" >>"${ZDOTDIR:-$HOME}/.zshrc"
 
   # Enable highliting whilst they are typed at a zsh.
   # This helps in reviewing commands before running them.
   # https://github.com/zsh-users/zsh-syntax-highlighting
   printf "%s\n" "Install commands highlighting."
   sudo git clone https://github.com/zsh-users/zsh-syntax-highlighting ${SHARE_FOLDER}/zsh-syntax-highlighting
-  echo "source ${SHARE_FOLDER}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >> "${ZDOTDIR:-$HOME}/.zshrc"
+  echo "source ${SHARE_FOLDER}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >>"${ZDOTDIR:-$HOME}/.zshrc"
 }
 
 install_rust() {
-  log "Install Rust." 
+  log "Install Rust."
   if check_cmd rustup; then
     printf "%s\n" "Rust is already installed"
   else
@@ -84,7 +84,7 @@ install_rust() {
 }
 
 install_golang() {
-  log "Install Goalng." 
+  log "Install Goalng."
   local GOLANG_VERSION="1.23.2"
   local GOLANG_FILE
 
@@ -121,12 +121,17 @@ setup_neovim() {
   # apt insltlls old verion of vim. snap conteins fresh release.
   snap install --classic nvim
 
-  # Install formatters
-  sudo apt-get -yq install \
-    xclip \
-    shellcheck
-  
+  # Used by Nvim to share OS and Nvim buffers.
+  # For more details run `:h clipboard` in nvim.
+  sudo apt-get -yq install xclip
+
+  # Shell linter. Used by bash-language-server.
+  sudo apt-get -yq install shellcheck
+  # Shell formatter.
+  go install mvdan.cc/sh/v3/cmd/shfmt@latest
+  # Lua formatter.
   cargo -q install --locked stylua
+  # YAML file formatter.
   go install github.com/mikefarah/yq/v4@latest
 }
 
@@ -137,13 +142,16 @@ setup_tui() {
   cargo -q install --locked yazi-fm yazi-cli
 
   printf "%s\n" "Install zellij - terminal splitter"
-  cargo -q install --locked  zellij
+  cargo -q install --locked zellij
 
   printf "%s\n" "Install eza - better ls"
   cargo -q install --locked eza
 
   printf "%s\n" "Install starship - beautify prompt for terminal input"
   cargo -q install --locked starship
+
+  printf "%s\n" "Install git-delta - side by side diff view fo lazygit"
+  cargo -q install --locked git-delta
 
   printf "%s\n" "Install lazygit"
   go install github.com/jesseduffield/lazygit@latest
@@ -162,8 +170,8 @@ setup_tui() {
 install_docker() {
   log "Install Docker"
   # Uninstall any conflicting packages:
-  for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc;
-    do sudo apt-get remove $pkg; 
+  for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do
+    sudo apt-get remove $pkg
   done
 
   # Add Docker's official GPG key:
@@ -176,8 +184,8 @@ install_docker() {
   # Add the repository to Apt sources:
   echo \
     "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
-    $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
-    sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+    $(. /etc/os-release && echo "$VERSION_CODENAME") stable" |
+    sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
   sudo apt-get update
 
   # Install the Docker packages:
