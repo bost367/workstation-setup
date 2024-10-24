@@ -100,6 +100,18 @@ install_golang() {
   go version
 }
 
+install_java() {
+  log "Install sdkman - jvm toolchain management."
+  curl -s "https://get.sdkman.io" | bash
+  source "$HOME/.sdkman/bin/sdkman-init.sh"
+
+  log "Install Java."
+  sdk install java 21.0.5-tem
+
+  sdk version
+  java --version
+}
+
 install_nodejs() {
   log "Install Nodejs and npm."
   sudo apt-get -yqq install nodejs
@@ -113,6 +125,7 @@ setup_toolcahins() {
   log "Toolchains instalation"
   install_rust
   install_golang
+  install_java
   install_nodejs
 }
 
