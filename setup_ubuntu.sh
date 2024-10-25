@@ -6,6 +6,18 @@ export XDG_CONFIG_HOME="$HOME/.config"
 export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
 export INSTALLED_VERSIONS=""
 
+setup_color() {
+  FMT_YELLOW=$(printf '\033[33m')
+  FMT_BOLD=$(tput bold)
+  FMT_BLUE_UNDERSCORE=$(printf '\033[4;34m')
+  FMT_RESET=$(printf '\033[0m')
+}
+
+log() {
+  setup_color
+  printf "%s\n" "${FMT_YELLOW}${1}${FMT_RESET}"
+}
+
 append_version() {
   INSTALLED_VERSIONS+="$1\n..........\n"
 }
@@ -15,19 +27,36 @@ print_version() {
   echo -e "$INSTALLED_VERSIONS"
 }
 
-setup_color() {
-  FMT_YELLOW=$(printf '\033[33m')
-  FMT_RESET=$(printf '\033[0m')
-  FMT_BOLD=$(printf '\033[1m')
+link() {
+  echo -e "${1}\e]8;;${3}\a${FMT_BLUE_UNDERSCORE}${2}${FMT_RESET}\e]8;;\a"
+}
+
+print_to_do_list() {
+  setup_color
+  echo "Environment has been setup. Reboot your PC to complete it all."
+  echo "Not all installations is automated. See the next steps to complete setup by your self."
+  echo ""
+  echo ""
+  echo "${FMT_BOLD}1. Install next desktop application.${FMT_RESET}"
+  link "  - " "Chrome" "https://www.google.com/chrome"
+  link "  - " "IntelliJ" "https://www.jetbrains.com/idea/download"
+  echo ""
+  echo "${FMT_BOLD}2. Setup identity .gitconfig file.${FMT_RESET}"
+  echo "  > setup git config --global user.name \"Name\""
+  echo "  > setup git config --global user.email \"Email\""
+  echo ""
+  echo "${FMT_BOLD}3. Generate ssh key and publish public key on GitHub.${FMT_RESET}"
+  link "  - " "Geenrate ssh key" "https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent#generating-a-new-ssh-key"
+  echo ""
+}
+
+print_post_install_message() {
+  print_version
+  print_to_do_list
 }
 
 check_cmd() {
   command -v "$1" >/dev/null 2>&1
-}
-
-log() {
-  setup_color
-  printf "%s\n" "${FMT_BOLD}${FMT_YELLOW}${1}${FMT_RESET}"
 }
 
 update_pakages() {
@@ -35,6 +64,7 @@ update_pakages() {
   sudo apt-get -q update && sudo apt-get -yq upgrade
   # Installing Complete Multimedia Support
   sudo apt-get -yq install ubuntu-restricted-extras
+  sudo ubuntu-drivers install
 }
 
 # Need to be install primarily: the required by other tools.
@@ -318,11 +348,7 @@ main() {
   install_desktop_applications
   personalyze_workstation
   clean_trash
-  print_version
+  print_post_install_message
 }
 
 main
-# TODO:
-# - setup git config --global user.name & user.email
-# - setup ssh key and publish public key on github
-# - Battary optimization
