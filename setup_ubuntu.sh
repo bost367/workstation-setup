@@ -48,6 +48,8 @@ print_to_do_list() {
   echo "${FMT_BOLD}3. Generate ssh key and publish public key on GitHub.${FMT_RESET}"
   link "  - " "Geenrate ssh key" "https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent#generating-a-new-ssh-key"
   echo ""
+  echo "${FMT_BOLD}4. Sync Obsidian vault.${FMT_RESET}"
+  echo "  -  TBD: describe steps"
 }
 
 print_post_install_message() {
@@ -313,13 +315,16 @@ setup_desktop_components() {
   dconf write /org/gnome/shell/extensions/ding/start-corner "'top-right'"
 }
 
-seup_desktop_fonts() {
+download_fonts() {
   log "Download Inter fonts"
   wget -q -O Inter.zip https://github.com/rsms/inter/releases/download/v4.0/Inter-4.0.zip
   mkdir -p "${HOME}/.local/share/fonts/Inter"
   unzip -qq Inter.zip -d "${HOME}/.local/share/fonts/Inter" Inter.ttc InterVariable.ttf InterVariable-Italic.ttf
   rm Inter.zip
+}
 
+setup_desktop_fonts() {
+  download_fonts
   log "Setup Inter fonts as desktop font"
   dconf write /org/gnome/desktop/interface/font-name "'Inter Display 11'"
   dconf write /org/gnome/desktop/interface/document-font-name "'Inter 11'"
