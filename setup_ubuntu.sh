@@ -308,15 +308,16 @@ setup_desktop_components() {
   printf "%s\n" "Change dock panel settings"
   dconf write /org/gnome/shell/extensions/dash-to-dock/dock-position "'BOTTOM'"
   dconf write /org/gnome/shell/extensions/dash-to-dock/dash-max-icon-size 48
-  dconf write /org/gnome/shell/extensions/dash-to-dock/show-mounts true
+  dconf write /org/gnome/shell/extensions/dash-to-dock/show-mounts false
   dconf write /org/gnome/shell/extensions/dash-to-dock/show-mounts-network true
+  dconf write /org/gnome/shell/extensions/dash-to-dock/extend-height false
 
   printf "%s\n" "Change file explorer settings"
   dconf write /org/gnome/nautilus/icon-view/default-zoom-level "'small'"
-  dconf write /org/gnome/nautilus/preferences/show-hidden-files true
+  dconf write /org/gtk/gtk4/settings/file-chooser/show-hidden true
 
   printf "%s\n" "Change desktop settings"
-  dconf write /org/gnome/shell/extensions/ding "'tiny'"
+  dconf write /org/gnome/shell/extensions/ding/icon-size "'tiny'"
   dconf write /org/gnome/shell/extensions/ding/show-home false
   dconf write /org/gnome/shell/extensions/ding/start-corner "'top-right'"
 }
