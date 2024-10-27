@@ -291,6 +291,28 @@ install_desktop_applications() {
   flatpak install -y flathub md.obsidian.Obsidian
 }
 
+setup_desktop_components() {
+  printf "%s\n" "Switch dark theme"
+  dconf write /org/gnome/desktop/interface/color-scheme "'prefer-dark'"
+  dconf write /org/gnome/desktop/interface/gtk-theme "'Yaru-blue-dark'"
+  dconf write /org/gnome/desktop/interface/icon-theme "'Yaru-blue'"
+
+  printf "%s\n" "Change dock panel settings"
+  dconf write /org/gnome/shell/extensions/dash-to-dock/dock-position "'BOTTOM'"
+  dconf write /org/gnome/shell/extensions/dash-to-dock/dash-max-icon-size 48
+  dconf write /org/gnome/shell/extensions/dash-to-dock/show-mounts true
+  dconf write /org/gnome/shell/extensions/dash-to-dock/show-mounts-network true
+
+  printf "%s\n" "Change file explorer settings"
+  dconf write /org/gnome/nautilus/icon-view/default-zoom-level "'small'"
+  dconf write /org/gnome/nautilus/preferences/show-hidden-files true
+
+  printf "%s\n" "Change desktop settings"
+  dconf write /org/gnome/shell/extensions/ding "'tiny'"
+  dconf write /org/gnome/shell/extensions/ding/show-home false
+  dconf write /org/gnome/shell/extensions/ding/start-corner "'top-right'"
+}
+
 seup_desktop_fonts() {
   log "Download Inter fonts"
   wget -q -O Inter.zip https://github.com/rsms/inter/releases/download/v4.0/Inter-4.0.zip
@@ -306,27 +328,19 @@ seup_desktop_fonts() {
   dconf write /org/gnome/desktop/wm/preferences/titlebar-font "'Inter Display 11'"
 }
 
-personalyze_workstation() {
-  log "Personalyze ui desktop"
-  # Switch dark theme
-  dconf write /org/gnome/desktop/interface/color-scheme "'prefer-dark'"
-  dconf write /org/gnome/desktop/interface/gtk-theme "'Yaru-blue-dark'"
-  dconf write /org/gnome/desktop/interface/icon-theme "'Yaru-blue'"
-  # Dock panel
-  dconf write /org/gnome/shell/extensions/dash-to-dock/dock-position "'BOTTOM'"
-  dconf write /org/gnome/shell/extensions/dash-to-dock/dash-max-icon-size 48
-  dconf write /org/gnome/shell/extensions/dash-to-dock/show-mounts true
-  dconf write /org/gnome/shell/extensions/dash-to-dock/show-mounts-network true
-  # File explorer
-  dconf write /org/gnome/nautilus/icon-view/default-zoom-level "'small'"
-  dconf write /org/gnome/nautilus/preferences/show-hidden-files true
-  # Desktop
-  dconf write /org/gnome/shell/extensions/ding "'tiny'"
-  dconf write /org/gnome/shell/extensions/ding/show-home false
-  dconf write /org/gnome/shell/extensions/ding/start-corner "'top-right'"
+setup_input_options() {
+  log "Setup input options (mouse acceleration etc.)"
   # Mouse speed. May be different from PC to PC.
   dconf write /org/gnome/desktop/peripherals/mouse/speed -0.67
+  # END & RUS keyboard input.
+  dconf write /org/gnome/desktop/input-sources/sources "[('xkb', 'us'), ('xkb', 'ru')]"
+}
+
+personalyze_workstation() {
+  log "Personalyze ui desktop"
+  setup_desktop_components
   seup_desktop_fonts
+  setup_input_options
 }
 
 clean_trash() {
