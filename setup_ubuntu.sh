@@ -1,6 +1,7 @@
 #!/bin/bash
 
 export PATH="$PATH:$HOME/.cargo/bin"
+export PATH="$PATH:$HOME/go/bin"
 export PATH="$PATH:/usr/local/go/bin"
 export XDG_CONFIG_HOME="$HOME/.config"
 export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
@@ -191,13 +192,15 @@ setup_neovim() {
   # Used by Nvim to share OS and Nvim buffers.
   # For more details run `:h clipboard` in nvim.
   sudo apt-get -yq install xclip
+  # XML formatter.
+  sudo apt-get -yq install libxml2-utils
   append_version "$(xmllint --version)"
-
   # Shell linter. Used by bash-language-server.
   sudo apt-get -yq install shellcheck
   append_version "$(shellcheck --version)"
   # Shell formatter.
   go install mvdan.cc/sh/v3/cmd/shfmt@latest
+  append_version "$(shfmt --version)"
   # Lua formatter.
   cargo -q install --locked stylua
   append_version "$(stylua --version)"
