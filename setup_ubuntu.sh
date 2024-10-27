@@ -42,8 +42,8 @@ print_to_do_list() {
   link "  - " "IntelliJ" "https://www.jetbrains.com/idea/download"
   echo ""
   echo "${FMT_BOLD}2. Setup identity .gitconfig file.${FMT_RESET}"
-  echo "  > setup git config --global user.name \"Name\""
-  echo "  > setup git config --global user.email \"Email\""
+  echo "  > git config --global user.name \"Name\""
+  echo "  > git config --global user.email \"Email\""
   echo ""
   echo "${FMT_BOLD}3. Generate ssh key and publish public key on GitHub.${FMT_RESET}"
   link "  - " "Geenrate ssh key" "https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent#generating-a-new-ssh-key"
@@ -75,10 +75,12 @@ setup_required_cli() {
   sudo apt-get -yqq install \
     curl \
     git \
-    wget
+    wget \
+    cmake
 
   # wget and curl has verbose output on `--version` command.
   append_version "$(git --version)"
+  append_version "$(cmake --version)"
 }
 
 setup_zsh() {
@@ -225,6 +227,7 @@ setup_tui() {
 
   printf "%s\n" "Install git-delta - side by side diff view fo lazygit"
   cargo -q install --locked git-delta
+  append_version "$(delta --version)"
 
   printf "%s\n" "Install lazygit"
   go install github.com/jesseduffield/lazygit@latest
@@ -344,7 +347,7 @@ setup_input_options() {
 personalyze_workstation() {
   log "Personalyze ui desktop"
   setup_desktop_components
-  seup_desktop_fonts
+  setup_desktop_fonts
   setup_input_options
 }
 
