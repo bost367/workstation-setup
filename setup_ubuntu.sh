@@ -5,7 +5,7 @@ export PATH="$PATH:$HOME/go/bin"
 export PATH="$PATH:/usr/local/go/bin"
 export XDG_CONFIG_HOME="$HOME/.config"
 export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
-export INSTALLED_VERSIONS=""
+installed_versions=""
 
 setup_color() {
   FMT_YELLOW=$(printf '\033[33m')
@@ -19,13 +19,20 @@ log() {
   printf "%s\n" "${FMT_YELLOW}${1}${FMT_RESET}"
 }
 
-append_version() {
-  INSTALLED_VERSIONS+="$1\n..........\n"
+report_version() {
+  local version
+  if [[ $# = 1 ]]; then
+    version=$(command "$1" "--version" 2>&1)
+  else
+    version=$(command "$1" "$2" 2>&1)
+  fi
+  local cmd_name="${FMT_BOLD}${1}${FMT_RESET}"
+  installed_versions+="$cmd_name\n$version\n..........\n"
 }
 
 print_version() {
   log "Installed tools:"
-  echo -e "$INSTALLED_VERSIONS"
+  echo -e "$installed_versions"
 }
 
 link() {
@@ -80,8 +87,8 @@ setup_required_cli() {
     cmake
 
   # wget and curl has verbose output on `--version` command.
-  append_version "$(git --version)"
-  append_version "$(cmake --version)"
+  report_version git
+  report_version cmake
 }
 
 setup_zsh() {
@@ -118,7 +125,7 @@ EOF
   sudo git clone https://github.com/zsh-users/zsh-syntax-highlighting ${SHARE_FOLDER}/zsh-syntax-highlighting
   echo "source ${SHARE_FOLDER}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >>"${ZDOTDIR:-$HOME}/.zshrc"
 
-  append_version "$(zsh --version)"
+  report_version zsh
 }
 
 install_rust() {
@@ -131,8 +138,8 @@ install_rust() {
   fi
   rustup update
 
-  append_version "$(rustup --version)"
-  append_version "$(cargo --version)"
+  report_version rustup
+  report_version cargo
 }
 
 install_golang() {
@@ -150,7 +157,7 @@ install_golang() {
   printf "%s\n" "Remove binary"
   rm "${GOLANG_FILE}"
 
-  append_version "$(go version)"
+  report_version go version
 }
 
 install_java() {
@@ -161,8 +168,8 @@ install_java() {
   log "Install Java (21.0.5-tem)."
   sdk install java 21.0.5-tem
 
-  append_version "$(sdk version)"
-  append_version "$(java --version)"
+  report_version sdk version
+  report_version java
 }
 
 install_nodejs() {
@@ -170,7 +177,7 @@ install_nodejs() {
   sudo apt-get -yqq install nodejs
   sudo apt-get -yqq install npm
 
-  append_version "$(npm version)"
+  report_version npm version
 }
 
 # Such toolchains requires bash/zsh file modification.
@@ -187,26 +194,26 @@ setup_neovim() {
   log "Install Neovim setup"
   # apt insltlls old verion of vim. snap conteins fresh release.
   snap install --classic nvim
-  append_version "$(nvim --version)"
+  report_version nvim
 
   # Used by Nvim to share OS and Nvim buffers.
   # For more details run `:h clipboard` in nvim.
   sudo apt-get -yq install xclip
   # XML formatter.
   sudo apt-get -yq install libxml2-utils
-  append_version "$(xmllint --version)"
+  report_version xmllint
   # Shell linter. Used by bash-language-server.
   sudo apt-get -yq install shellcheck
-  append_version "$(shellcheck --version)"
+  report_version shellcheck
   # Shell formatter.
   go install mvdan.cc/sh/v3/cmd/shfmt@latest
-  append_version "$(shfmt --version)"
+  report_version shfmt
   # Lua formatter.
   cargo -q install --locked stylua
-  append_version "$(stylua --version)"
+  report_version stylua
   # YAML file formatter.
   go install github.com/mikefarah/yq/v4@latest
-  append_version "$(yq --version)"
+  report_version yq
 }
 
 setup_tui() {
@@ -214,39 +221,39 @@ setup_tui() {
 
   printf "%s\n" "Install yazi - filemanager"
   cargo -q install --locked yazi-fm yazi-cli
-  append_version "$(yazi --version)"
+  report_version yazi
 
   printf "%s\n" "Install zellij - terminal splitter"
   cargo -q install --locked zellij
-  append_version "$(zellij --version)"
+  report_version zellij
 
   printf "%s\n" "Install eza - better ls"
   cargo -q install --locked eza
-  append_version "$(eza --version)"
+  report_version eza
 
   printf "%s\n" "Install starship - beautify prompt for terminal input"
   cargo -q install --locked starship
-  append_version "$(starship --version)"
+  report_version starship
 
   printf "%s\n" "Install git-delta - side by side diff view fo lazygit"
   cargo -q install --locked git-delta
-  append_version "$(delta --version)"
+  report_version delta
 
   printf "%s\n" "Install lazygit"
   go install github.com/jesseduffield/lazygit@latest
-  append_version "$(lazygit --version)"
+  report_version lazygit
 
   printf "%s\n" "Install lazydocker"
   go install github.com/jesseduffield/lazydocker@latest
-  append_version "$(lazydocker --version)"
+  report_version lazydocker
 
   printf "%s\n" "Install alacritty"
   snap install --classic alacritty
-  append_version "$(alacritty --version)"
+  report_version alacritty
 
   printf "%s\n" "Install btop - better htop"
   snap install btop
-  append_version "$(btop --version)"
+  report_version btop
 }
 
 # https://docs.docker.com/engine/install/ubuntu/
@@ -273,7 +280,7 @@ install_docker() {
 
   # Install the Docker packages:
   sudo apt-get -yq install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-  append_version "$(docker --version)"
+  report_version docker
 }
 
 install_nerd_fonts() {
