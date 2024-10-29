@@ -285,8 +285,8 @@ install_docker() {
 
 install_nerd_fonts() {
   log "Install Nerd Fonts"
-  git clone --filter=blob:none --sparse git@github.com:ryanoasis/nerd-fonts
-  cd nerd-fonts
+  git clone --filter=blob:none --sparse https://github.com/ryanoasis/nerd-fonts.git
+  cd nerd-fonts || return
   git sparse-checkout add patched-fonts/JetBrainsMono
   bash install.sh JetBrainsMono
   cd .. && rm -rf nerd-fonts
