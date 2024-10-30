@@ -5,18 +5,18 @@ export PATH="$PATH:$HOME/go/bin"
 export PATH="$PATH:/usr/local/go/bin"
 export XDG_CONFIG_HOME="$HOME/.config"
 export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
+
+# colour palette
+clr_reset=$(tput sgr0)
+clr_bold=$(tput bold)
+clr_cyan="\e[0;36m"
+clr_blue_underscore="\033[4;34m"
+
+# variables
 installed_versions=""
 
-setup_color() {
-  FMT_YELLOW=$(printf '\033[33m')
-  FMT_BOLD=$(tput bold)
-  FMT_BLUE_UNDERSCORE=$(printf '\033[4;34m')
-  FMT_RESET=$(printf '\033[0m')
-}
-
-log() {
-  setup_color
-  printf "%s\n" "${FMT_YELLOW}${1}${FMT_RESET}"
+log_info() {
+  echo -e "${clr_cyan}info${clr_reset}: ${1}"
 }
 
 report_version() {
@@ -26,37 +26,36 @@ report_version() {
   else
     version=$(command "$1" "$2" 2>&1)
   fi
-  local cmd_name="${FMT_BOLD}${1}${FMT_RESET}"
+  local cmd_name="${clr_bold}${1}${clr_reset}"
   installed_versions+="$cmd_name\n$version\n..........\n"
 }
 
 print_version() {
-  log "Installed tools:"
+  log_info "Installed tools:"
   echo -e "$installed_versions"
 }
 
 link() {
-  echo -e "${1}\e]8;;${3}\a${FMT_BLUE_UNDERSCORE}${2}${FMT_RESET}\e]8;;\a"
+  echo -e "${1}\e]8;;${3}\a${clr_blue_underscore}${2}${clr_reset}\e]8;;\a"
 }
 
 print_to_do_list() {
-  setup_color
   echo "Environment has been setup. Reboot your PC to complete it all."
   echo "Not all installations is automated. See the next steps to complete setup by your self."
   echo ""
   echo ""
-  echo "${FMT_BOLD}1. Install next desktop application.${FMT_RESET}"
+  echo "${clr_bold}1. Install next desktop application.${clr_reset}"
   link "  - " "Chrome" "https://www.google.com/chrome"
   link "  - " "IntelliJ" "https://www.jetbrains.com/idea/download"
   echo ""
-  echo "${FMT_BOLD}2. Setup identity .gitconfig file.${FMT_RESET}"
+  echo "${clr_bold}2. Setup identity .gitconfig file.${clr_reset}"
   echo "  > git config --global user.name \"Name\""
   echo "  > git config --global user.email \"Email\""
   echo ""
-  echo "${FMT_BOLD}3. Generate ssh key and publish public key on GitHub.${FMT_RESET}"
+  echo "${clr_bold}3. Generate ssh key and publish public key on GitHub.${clr_reset}"
   link "  - " "Geenrate ssh key" "https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent#generating-a-new-ssh-key"
   echo ""
-  echo "${FMT_BOLD}4. Sync Obsidian vault.${FMT_RESET}"
+  echo "${clr_bold}4. Sync Obsidian vault.${clr_reset}"
   echo "  -  TBD: describe steps"
 }
 
@@ -70,7 +69,7 @@ check_cmd() {
 }
 
 update_pakages() {
-  log "Update and upgrade packages"
+  log_info "Update and upgrade packages."
   sudo apt-get -q update && sudo apt-get -yq upgrade
   # Installing Complete Multimedia Support
   sudo apt-get -yq install ubuntu-restricted-extras
@@ -79,7 +78,7 @@ update_pakages() {
 
 # Need to be install primarily: the required by other tools.
 setup_required_cli() {
-  log "Install required CLIs"
+  log_info "Install required CLIs."
   sudo apt-get -yqq install \
     curl \
     git \
@@ -92,7 +91,7 @@ setup_required_cli() {
 }
 
 setup_zsh() {
-  log "Install ZSH"
+  log_info "Install zsh."
   local SHARE_FOLDER="/usr/local/share"
   mkdir -p "${ZDOTDIR}"
   sudo apt-get -yqq install zsh
@@ -110,18 +109,18 @@ EOF
   # https://stackoverflow.com/questions/15769615/remove-last-login-message-for-new-tabs-in-terminal
   touch "$HOME/.hushlogin"
 
-  printf "%s\n" "Make zsh default"
+  log_info "Make zsh defaul."
   chsh -s "$(which zsh)"
 
   # https://github.com/zsh-users/zsh-autosuggestions
-  printf "%s\n" "Install commands autocompletition"
+  log_info "Install commands autocompletition."
   sudo git clone https://github.com/zsh-users/zsh-autosuggestions ${SHARE_FOLDER}/zsh-autosuggestions
   echo "source ${SHARE_FOLDER}/zsh-autosuggestions/zsh-autosuggestions.zsh" >>"${ZDOTDIR:-$HOME}/.zshrc"
 
   # Enable highliting whilst they are typed at a zsh.
   # This helps in reviewing commands before running them.
   # https://github.com/zsh-users/zsh-syntax-highlighting
-  printf "%s\n" "Install commands highlighting."
+  log_info "Install commands highlighting."
   sudo git clone https://github.com/zsh-users/zsh-syntax-highlighting ${SHARE_FOLDER}/zsh-syntax-highlighting
   echo "source ${SHARE_FOLDER}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >>"${ZDOTDIR:-$HOME}/.zshrc"
 
@@ -129,11 +128,11 @@ EOF
 }
 
 install_rust() {
-  log "Install Rust."
+  log_info "Install Rust."
   if check_cmd rustup; then
-    printf "%s\n" "Rust is already installed"
+    log_info "Rust is already installed."
   else
-    printf "%s\n" "Rust is not found. Install it"
+    log_info "Rust is not found. Install it."
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -yq
   fi
   rustup update
@@ -143,29 +142,29 @@ install_rust() {
 }
 
 install_golang() {
-  log "Install Goalng."
+  log_info "Install Goalng."
   local GOLANG_VERSION="1.23.2"
   local GOLANG_FILE
 
-  printf "%s\n" "Download binaries"
+  log_info "Download binaries."
   GOLANG_FILE="go${GOLANG_VERSION}.linux-$(dpkg --print-architecture).tar.gz"
   wget -q "https://go.dev/dl/${GOLANG_FILE}"
 
-  printf "%s\n" "Remove any previous Go installation and install new one"
+  log_info "Remove any previous Go installation and install new one."
   sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf "${GOLANG_FILE}"
 
-  printf "%s\n" "Remove binary"
+  log_info "Remove binary."
   rm "${GOLANG_FILE}"
 
   report_version go version
 }
 
 install_java() {
-  log "Install sdkman - jvm toolchain management."
+  log_info "Install sdkman - JVM toolchain management."
   curl -s "https://get.sdkman.io" | bash
   source "$HOME/.sdkman/bin/sdkman-init.sh"
 
-  log "Install Java (21.0.5-tem)."
+  log_info "Install Java (21.0.5-tem)."
   sdk install java 21.0.5-tem
 
   report_version sdk version
@@ -173,7 +172,7 @@ install_java() {
 }
 
 install_nodejs() {
-  log "Install Nodejs and npm."
+  log_info "Install Nodejs and npm."
   sudo apt-get -yqq install nodejs
   sudo apt-get -yqq install npm
 
@@ -183,7 +182,7 @@ install_nodejs() {
 # Such toolchains requires bash/zsh file modification.
 # Toolchains also is used to install bin files
 setup_toolcahins() {
-  log "Toolchains instalation"
+  log_info "Toolchains instalation."
   install_rust
   install_golang
   install_java
@@ -191,7 +190,7 @@ setup_toolcahins() {
 }
 
 setup_neovim() {
-  log "Install Neovim setup"
+  log_info "Install Neovim setup."
   # apt insltlls old verion of vim. snap conteins fresh release.
   snap install --classic nvim
   report_version nvim
@@ -217,48 +216,48 @@ setup_neovim() {
 }
 
 setup_tui() {
-  log "Install TUI CLIs"
+  log_info "Install TUI CLIs."
 
-  printf "%s\n" "Install yazi - filemanager"
+  log_info "Install yazi - filemanager."
   cargo -q install --locked yazi-fm yazi-cli
   report_version yazi
 
-  printf "%s\n" "Install zellij - terminal splitter"
+  log_info "Install zellij - terminal splitter."
   cargo -q install --locked zellij
   report_version zellij
 
-  printf "%s\n" "Install eza - better ls"
+  log_info "Install eza - better ls."
   cargo -q install --locked eza
   report_version eza
 
-  printf "%s\n" "Install starship - beautify prompt for terminal input"
+  log_info "Install starship - beautify prompt for terminal input."
   cargo -q install --locked starship
   report_version starship
 
-  printf "%s\n" "Install git-delta - side by side diff view fo lazygit"
+  log_info "Install git-delta - side by side diff view fo lazygit."
   cargo -q install --locked git-delta
   report_version delta
 
-  printf "%s\n" "Install lazygit"
+  log_info "Install lazygit."
   go install github.com/jesseduffield/lazygit@latest
   report_version lazygit
 
-  printf "%s\n" "Install lazydocker"
+  log_info "Install lazydocker."
   go install github.com/jesseduffield/lazydocker@latest
   report_version lazydocker
 
-  printf "%s\n" "Install alacritty"
+  log_info "Install alacritty."
   snap install --classic alacritty
   report_version alacritty
 
-  printf "%s\n" "Install btop - better htop"
+  log_info "Install btop - better htop."
   snap install btop
   report_version btop
 }
 
 # https://docs.docker.com/engine/install/ubuntu/
 install_docker() {
-  log "Install Docker"
+  log_info "Install Docker."
   # Uninstall any conflicting packages:
   for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do
     sudo apt-get remove $pkg
@@ -284,7 +283,7 @@ install_docker() {
 }
 
 install_nerd_fonts() {
-  log "Install Nerd Fonts"
+  log_info "Install Nerd Fonts."
   git clone --filter=blob:none --sparse https://github.com/ryanoasis/nerd-fonts.git
   cd nerd-fonts || return
   git sparse-checkout add patched-fonts/JetBrainsMono
@@ -293,44 +292,44 @@ install_nerd_fonts() {
 }
 
 install_flatpak() {
-  log "Install Flatpak"
+  log_info "Install Flatpak."
   sudo apt-get -yq install flatpak
   sudo apt-get -yq install gnome-software-plugin-flatpak
   flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 }
 
 install_desktop_applications() {
-  log "Install Desktop application"
+  log_info "Install Desktop application."
   flatpak install -y flathub org.telegram.desktop
   flatpak install -y flathub com.getpostman.Postman
   flatpak install -y flathub md.obsidian.Obsidian
 }
 
 setup_desktop_components() {
-  printf "%s\n" "Switch dark theme"
+  log_info "Switch dark theme."
   dconf write /org/gnome/desktop/interface/color-scheme "'prefer-dark'"
   dconf write /org/gnome/desktop/interface/gtk-theme "'Yaru-blue-dark'"
   dconf write /org/gnome/desktop/interface/icon-theme "'Yaru-blue'"
 
-  printf "%s\n" "Change dock panel settings"
+  log_info "Change dock panel settings."
   dconf write /org/gnome/shell/extensions/dash-to-dock/dock-position "'BOTTOM'"
   dconf write /org/gnome/shell/extensions/dash-to-dock/dash-max-icon-size 48
   dconf write /org/gnome/shell/extensions/dash-to-dock/show-mounts false
   dconf write /org/gnome/shell/extensions/dash-to-dock/show-mounts-network true
   dconf write /org/gnome/shell/extensions/dash-to-dock/extend-height false
 
-  printf "%s\n" "Change file explorer settings"
+  log_info "Change file explorer settings."
   dconf write /org/gnome/nautilus/icon-view/default-zoom-level "'small'"
   dconf write /org/gtk/gtk4/settings/file-chooser/show-hidden true
 
-  printf "%s\n" "Change desktop settings"
+  log_info "Change desktop settings."
   dconf write /org/gnome/shell/extensions/ding/icon-size "'tiny'"
   dconf write /org/gnome/shell/extensions/ding/show-home false
   dconf write /org/gnome/shell/extensions/ding/start-corner "'top-right'"
 }
 
 download_fonts() {
-  log "Download Inter fonts"
+  log_info "Download Inter fonts."
   wget -q -O Inter.zip https://github.com/rsms/inter/releases/download/v4.0/Inter-4.0.zip
   mkdir -p "${HOME}/.local/share/fonts/Inter"
   unzip -qq Inter.zip -d "${HOME}/.local/share/fonts/Inter" Inter.ttc InterVariable.ttf InterVariable-Italic.ttf
@@ -339,7 +338,7 @@ download_fonts() {
 
 setup_desktop_fonts() {
   download_fonts
-  log "Setup Inter fonts as desktop font"
+  log_info "Setup Inter fonts as desktop font."
   dconf write /org/gnome/desktop/interface/font-name "'Inter Display 11'"
   dconf write /org/gnome/desktop/interface/document-font-name "'Inter 11'"
   dconf write /org/gnome/desktop/interface/monospace-font-name "'JetBrainsMono Nerd Font 13'"
@@ -348,7 +347,7 @@ setup_desktop_fonts() {
 }
 
 setup_input_options() {
-  log "Setup input options (mouse acceleration etc.)"
+  log_info "Setup input options (mouse acceleration etc.)."
   # Mouse speed. May be different from PC to PC.
   dconf write /org/gnome/desktop/peripherals/mouse/speed -0.67
   # END & RUS keyboard input.
@@ -356,13 +355,14 @@ setup_input_options() {
 }
 
 personalyze_workstation() {
-  log "Personalyze ui desktop"
+  log_info "Personalyze ui desktop."
   setup_desktop_components
   setup_desktop_fonts
   setup_input_options
 }
 
 clean_trash() {
+  log_info "Clean up all mess."
   sudo apt-get autoclean
   sudo apt-get clean -yq
 }
