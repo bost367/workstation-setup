@@ -62,6 +62,8 @@ print_to_do_list() {
 print_post_install_message() {
   print_version
   print_to_do_list
+  log_info "Run docker hello world."
+  docker run hello-world
 }
 
 check_cmd() {
@@ -280,6 +282,12 @@ install_docker() {
   # Install the Docker packages:
   sudo apt-get -yq install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
   report_version docker
+
+  log_info "Add user to docker group."
+  # https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user
+  sudo groupadd docker
+  sudo usermod -aG docker "${USER}"
+  newgrp docker
 }
 
 install_nerd_fonts() {
