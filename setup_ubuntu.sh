@@ -92,16 +92,16 @@ check_ostype() {
 
 update_pakages() {
   log_info "Update and upgrade packages."
-  sudo apt-get -q update && sudo apt-get -yq upgrade
+  sudo apt-get -q update && sudo apt-get -y upgrade
   # Installing Complete Multimedia Support
-  sudo apt-get -yq install ubuntu-restricted-extras
+  sudo apt-get -y install ubuntu-restricted-extras
   sudo ubuntu-drivers install
 }
 
 # Need to be install primarily: the required by other tools.
 setup_required_cli() {
   log_info "Install required CLIs."
-  sudo apt-get -yqq install \
+  sudo apt-get -y install \
     curl \
     git \
     wget \
@@ -116,7 +116,7 @@ setup_zsh() {
   log_info "Install zsh."
   local SHARE_FOLDER="/usr/local/share"
   mkdir -p "${ZDOTDIR}"
-  sudo apt-get -yqq install zsh
+  sudo apt-get -y install zsh
 
   # Change default zsh directory. All main files will be stored
   # in custom directory exept .zshenv: it points to .zshrc and
@@ -195,8 +195,8 @@ install_java() {
 
 install_nodejs() {
   log_info "Install Nodejs and npm."
-  sudo apt-get -yqq install nodejs
-  sudo apt-get -yqq install npm
+  sudo apt-get -y install nodejs
+  sudo apt-get -y install npm
 
   report_version npm version
 }
@@ -219,12 +219,12 @@ setup_neovim() {
 
   # Used by Nvim to share OS and Nvim buffers.
   # For more details run `:h clipboard` in nvim.
-  sudo apt-get -yq install xclip
+  sudo apt-get -y install xclip
   # XML formatter.
-  sudo apt-get -yq install libxml2-utils
+  sudo apt-get -y install libxml2-utils
   report_version xmllint
   # Shell linter. Used by bash-language-server.
-  sudo apt-get -yq install shellcheck
+  sudo apt-get -y install shellcheck
   report_version shellcheck
   # Shell formatter.
   go install mvdan.cc/sh/v3/cmd/shfmt@latest
@@ -287,7 +287,7 @@ install_docker() {
 
   # Add Docker's official GPG key:
   sudo apt-get update
-  sudo apt-get -yq install ca-certificates curl
+  sudo apt-get -y install ca-certificates curl
   sudo install -myq 0755 -d /etc/apt/keyrings
   sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
   sudo chmod a+r /etc/apt/keyrings/docker.asc
@@ -300,7 +300,7 @@ install_docker() {
   sudo apt-get update
 
   # Install the Docker packages:
-  sudo apt-get -yq install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+  sudo apt-get -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
   report_version docker
 
   log_info "Add user to docker group."
@@ -321,8 +321,8 @@ install_nerd_fonts() {
 
 install_flatpak() {
   log_info "Install Flatpak."
-  sudo apt-get -yq install flatpak
-  sudo apt-get -yq install gnome-software-plugin-flatpak
+  sudo apt-get -y install flatpak
+  sudo apt-get -y install gnome-software-plugin-flatpak
   flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 }
 
@@ -401,7 +401,7 @@ personalyze_workstation() {
 clean_trash() {
   log_info "Clean up all mess."
   sudo apt-get autoclean
-  sudo apt-get clean -yq
+  sudo apt-get clean -y
 }
 
 # Order matters: some functions install cli which requered by the next installations.
