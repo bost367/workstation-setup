@@ -69,14 +69,14 @@ print_to_do_list() {
 }
 
 print_post_install_message() {
-  print_version >&2
-  print_to_do_list >&2
-  log_info "Run docker hello world." >&2
+  log_info "Run docker hello world."
   if [[ $(docker run hello-world) ]]; then
-    log_info "docker hello-world runs sucsessfuly."
+    log_info "docker hello-world runs successfully."
   else
     log_warn "docker hello-world faild."
   fi
+  print_version >&2
+  print_to_do_list >&2
 }
 
 check_cmd() {
@@ -91,9 +91,13 @@ check_ostype() {
 }
 
 update_pakages() {
-  log_info "Update and upgrade packages."
+  log_info "Update and upgrade packages. It takes some time."
   sudo apt-get -q update && sudo apt-get -y upgrade
   # Installing Complete Multimedia Support
+  # ubuntu-restricted-extras during its installation, offers user
+  # input in interactive mode (ttf-mscorefonts-installer requires licence agreement). 
+  # To avoid this write answer in advance.
+  echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections
   sudo apt-get -y install ubuntu-restricted-extras
   sudo ubuntu-drivers install
 }
@@ -135,15 +139,15 @@ EOF
   chsh -s "$(which zsh)"
 
   # https://github.com/zsh-users/zsh-autosuggestions
-  log_info "Install commands autocompletition."
-  sudo git clone https://github.com/zsh-users/zsh-autosuggestions ${SHARE_FOLDER}/zsh-autosuggestions
+  log_info "Install zsh commands autocompletition."
+  sudo git clone -q https://github.com/zsh-users/zsh-autosuggestions ${SHARE_FOLDER}/zsh-autosuggestions
   echo "source ${SHARE_FOLDER}/zsh-autosuggestions/zsh-autosuggestions.zsh" >>"${ZDOTDIR:-$HOME}/.zshrc"
 
   # Enable highliting whilst they are typed at a zsh.
   # This helps in reviewing commands before running them.
   # https://github.com/zsh-users/zsh-syntax-highlighting
-  log_info "Install commands highlighting."
-  sudo git clone https://github.com/zsh-users/zsh-syntax-highlighting ${SHARE_FOLDER}/zsh-syntax-highlighting
+  log_info "Install zsh commands highlighting."
+  sudo git clone -q https://github.com/zsh-users/zsh-syntax-highlighting ${SHARE_FOLDER}/zsh-syntax-highlighting
   echo "source ${SHARE_FOLDER}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >>"${ZDOTDIR:-$HOME}/.zshrc"
 
   report_version zsh
@@ -288,7 +292,7 @@ install_docker() {
   # Add Docker's official GPG key:
   sudo apt-get update
   sudo apt-get -y install ca-certificates curl
-  sudo install -myq 0755 -d /etc/apt/keyrings
+  sudo install -m 0755 -d /etc/apt/keyrings
   sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
   sudo chmod a+r /etc/apt/keyrings/docker.asc
 
@@ -305,14 +309,14 @@ install_docker() {
 
   log_info "Add user to docker group."
   # https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user
-  sudo groupadd docker
+  # Skip docker group creating - current docker installation already do this.
   sudo usermod -aG docker "${USER}"
   newgrp docker
 }
 
 install_nerd_fonts() {
   log_info "Install Nerd Fonts."
-  git clone --filter=blob:none --sparse https://github.com/ryanoasis/nerd-fonts.git
+  git clone -q --filter=blob:none --sparse https://github.com/ryanoasis/nerd-fonts.git
   cd nerd-fonts || return
   git sparse-checkout add patched-fonts/JetBrainsMono
   bash install.sh JetBrainsMono
@@ -412,9 +416,9 @@ main() {
   setup_zsh
   setup_toolcahins
   setup_neovim
-  setup_tui
   install_docker
   install_nerd_fonts
+  setup_tui
   install_flatpak
   install_desktop_applications
   personalyze_workstation
