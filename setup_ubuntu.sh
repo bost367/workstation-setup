@@ -10,6 +10,7 @@ export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
 clr_reset=$(tput sgr0)
 clr_bold=$(tput bold)
 clr_cyan="\e[0;36m"
+clr_yellow="\e[0;33m"
 clr_red="\e[0;31m"
 clr_blue_underscore="\033[4;34m"
 
@@ -18,6 +19,10 @@ installed_versions=""
 
 log_info() {
   echo -e "${clr_cyan}info:${clr_reset} ${1}"
+}
+
+log_warn() {
+  echo -e "${clr_yellow}warn:${clr_reset} ${1}"
 }
 
 log_error() {
@@ -325,6 +330,14 @@ install_desktop_applications() {
   flatpak install -y flathub md.obsidian.Obsidian
 }
 
+check_if_gnome_environment() {
+  if ! check_cmd gnome-shell; then
+    log_warn "Gnome shell not found."
+    log_warn "Personalization step will be skipped."
+    return 1
+  fi
+}
+
 setup_desktop_components() {
   log_info "Switch dark theme."
   dconf write /org/gnome/desktop/interface/color-scheme "'prefer-dark'"
@@ -376,6 +389,7 @@ setup_input_options() {
 
 personalyze_workstation() {
   log_info "Personalyze ui desktop."
+  check_if_gnome_environment || return
   setup_desktop_components
   setup_desktop_fonts
   setup_input_options
