@@ -76,11 +76,8 @@ check_cmd() {
 }
 
 check_ostype() {
-  local os_type
-  os_type="$(uname -s)"
-  if [[ ! $os_type = "Linux" ]]; then
-    log_error "This script aim to be run on Linux system only."
-    log_error "Current host is running on $os_type."
+  if ! uname -a | grep -q "Ubuntu"; then
+    log_error "This script aim to be run on Ubuntu distro only."
     exit 1
   fi
 }
