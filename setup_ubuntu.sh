@@ -10,13 +10,18 @@ export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
 clr_reset=$(tput sgr0)
 clr_bold=$(tput bold)
 clr_cyan="\e[0;36m"
+clr_red="\e[0;31m"
 clr_blue_underscore="\033[4;34m"
 
 # variables
 installed_versions=""
 
 log_info() {
-  echo -e "${clr_cyan}info${clr_reset}: ${1}"
+  echo -e "${clr_cyan}info:${clr_reset} ${1}"
+}
+
+log_error() {
+  echo -e "${clr_red}error:${clr_reset} ${1}"
 }
 
 report_version() {
@@ -68,6 +73,16 @@ print_post_install_message() {
 
 check_cmd() {
   command -v "$1" >/dev/null 2>&1
+}
+
+check_ostype() {
+  local os_type
+  os_type="$(uname -s)"
+  if [[ ! $os_type = "Linux" ]]; then
+    log_error "This script aim to be run on Linux system only."
+    log_error "Current host is running on $os_type."
+    exit 1
+  fi
 }
 
 update_pakages() {
@@ -377,6 +392,7 @@ clean_trash() {
 
 # Order matters: some functions install cli which requered by the next installations.
 main() {
+  check_ostype
   update_pakages
   setup_required_cli
   setup_zsh
