@@ -6,6 +6,16 @@ setup_color() {
   FMT_BOLD=$(printf '\033[1m')
 }
 
+check_ostype() {
+  local os_type
+  os_type="$(uname -s)"
+  if [[ ! $os_type = "Darwin" ]]; then
+    echo "This script aim to be run on Darwin system only."
+    echo "Current host is running on $os_type."
+    exit 1
+  fi
+}
+
 setup_homebrew() {
   if ! type "$brew -v" >/dev/null; then
     echo "${FMT_YELLOW}Brew is already installed.${FMT_RESET}"
@@ -102,6 +112,7 @@ setup_gui() {
 
 # Order matters: some functions install cli which requered by the next installations.
 main() {
+  check_ostype
   setup_color
   setup_homebrew
   setup_required_cli
