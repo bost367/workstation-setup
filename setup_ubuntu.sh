@@ -18,15 +18,15 @@ clr_blue_underscore="\033[4;34m"
 installed_versions=""
 
 log_info() {
-  echo -e "${clr_cyan}info:${clr_reset} ${1}"
+  echo -e "${clr_cyan}info:${clr_reset} ${1}" >&2
 }
 
 log_warn() {
-  echo -e "${clr_yellow}warn:${clr_reset} ${1}"
+  echo -e "${clr_yellow}warn:${clr_reset} ${1}" >&2
 }
 
 log_error() {
-  echo -e "${clr_red}error:${clr_reset} ${1}"
+  echo -e "${clr_red}error:${clr_reset} ${1}" >&2
 }
 
 report_version() {
@@ -53,7 +53,6 @@ print_to_do_list() {
   echo "Environment has been setup. Reboot your PC to complete it all."
   echo "Not all installations is automated. See the next steps to complete setup by your self."
   echo ""
-  echo ""
   echo "${clr_bold}1. Install next desktop application.${clr_reset}"
   link "  - " "Chrome" "https://www.google.com/chrome"
   link "  - " "IntelliJ" "https://www.jetbrains.com/idea/download"
@@ -70,10 +69,14 @@ print_to_do_list() {
 }
 
 print_post_install_message() {
-  print_version
-  print_to_do_list
-  log_info "Run docker hello world."
-  docker run hello-world
+  print_version >&2
+  print_to_do_list >&2
+  log_info "Run docker hello world." >&2
+  if [[ $(docker run hello-world) ]]; then
+    log_info "docker hello-world runs sucsessfuly."
+  else
+    log_warn "docker hello-world faild."
+  fi
 }
 
 check_cmd() {
