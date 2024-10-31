@@ -91,11 +91,14 @@ check_ostype() {
 }
 
 update_pakages() {
-  log_info "Update and upgrade packages."
+  log_info "Update and upgrade packages. It takes some time."
   sudo apt-get -q update && sudo apt-get -y upgrade
   # Installing Complete Multimedia Support
   sudo apt-get -y install ubuntu-restricted-extras
-  sudo ubuntu-drivers install
+  # ubuntu-drivers offers input in interactive mode.
+  # In order to write execution process in log file,
+  # command output must be redirect to stderr.
+  sudo ubuntu-drivers install >&2
 }
 
 # Need to be install primarily: the required by other tools.
@@ -305,7 +308,7 @@ install_docker() {
 
   log_info "Add user to docker group."
   # https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user
-  sudo groupadd docker
+  sudo groupadd docker || true
   sudo usermod -aG docker "${USER}"
   newgrp docker
 }
