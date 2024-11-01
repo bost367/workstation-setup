@@ -313,7 +313,8 @@ install_docker() {
   sudo usermod -aG docker "${USER}"
   # https://unix.stackexchange.com/questions/18897/problem-while-running-newgrp-command-in-script
   # https://stackoverflow.com/questions/299728/how-do-you-use-newgrp-in-a-script-then-stay-in-that-group-when-the-script-exits
-  newgrp docker
+  newgrp docker <<'EOL'
+EOL
 }
 
 install_nerd_fonts() {
