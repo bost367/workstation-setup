@@ -311,6 +311,8 @@ install_docker() {
   # https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user
   # Skip docker group creating - current docker installation already do this.
   sudo usermod -aG docker "${USER}"
+  # https://unix.stackexchange.com/questions/18897/problem-while-running-newgrp-command-in-script
+  # https://stackoverflow.com/questions/299728/how-do-you-use-newgrp-in-a-script-then-stay-in-that-group-when-the-script-exits
   newgrp docker
 }
 
