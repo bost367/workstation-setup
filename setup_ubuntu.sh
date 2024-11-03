@@ -92,14 +92,16 @@ check_ostype() {
 
 update_pakages() {
   log_info "Update and upgrade packages. It takes some time."
-  sudo apt-get -q update && sudo apt-get -y upgrade
-  # Installing Complete Multimedia Support
-  # ubuntu-restricted-extras during its installation, offers user
-  # input in interactive mode (ttf-mscorefonts-installer requires licence agreement). 
-  # To avoid this write answer in advance.
+  # update-distro must be run before drivers installations.
+  # Otherwise ignoring distro updating can lead to broken drivers (like wi-fi).
+  sudo apt-get -q update && sudo apt-get -y dist-upgrade
+  sudo ubuntu-drivers install
+  # Installing Complete Multimedia Support.
+  # ubuntu-restricted-extras during its installation, offers user to
+  # input in interactive mode licence agreement (it is ttf-mscorefonts-installer requirement).
+  # To avoid this, writing answer in advance.
   echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections
   sudo apt-get -y install ubuntu-restricted-extras
-  sudo ubuntu-drivers install
 }
 
 # Need to be install primarily: the required by other tools.
