@@ -418,7 +418,6 @@ setup_desktop_fonts() {
   dconf write /org/gnome/desktop/interface/font-name "'Inter Display 11'"
   dconf write /org/gnome/desktop/interface/document-font-name "'Inter 11'"
   dconf write /org/gnome/desktop/interface/monospace-font-name "'JetBrainsMono Nerd Font 13'"
-  dconf write /org/gnome/desktop/wm/preferences/titlebar-font "'Inter Bold 11'"
   dconf write /org/gnome/desktop/wm/preferences/titlebar-font "'Inter Display 11'"
 }
 
