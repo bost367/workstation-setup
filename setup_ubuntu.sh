@@ -72,6 +72,9 @@ print_post_install_message() {
   log_info "Run docker hello world."
   if [[ $(docker run hello-world) ]]; then
     log_info "docker hello-world runs successfully."
+  elif [[ $(sudo docker run hello-world) ]]; then
+    log_warn "Docker requeres root access."
+    log_warn "See post-installation steps in docker setup guide to fix in."
   else
     log_warn "docker hello-world faild."
   fi
@@ -90,11 +93,14 @@ check_ostype() {
   fi
 }
 
-update_pakages() {
-  log_info "Update and upgrade packages. It takes some time."
+update_distro() {
+  log_info "Update distro ackages (including kernel). It takes some time."
   # update-distro must be run before drivers installations.
   # Otherwise ignoring distro updating can lead to broken drivers (like wi-fi).
-  sudo apt-get -q update && sudo apt-get -y dist-upgrade
+  (sudo apt-get -q update && sudo apt-get -y dist-upgrade) || {
+    log_error "Update distro is failure."
+    exit 1
+  }
   sudo ubuntu-drivers install
   # Installing Complete Multimedia Support.
   # ubuntu-restricted-extras during its installation, offers user to
@@ -414,7 +420,7 @@ clean_trash() {
 # Order matters: some functions install cli which requered by the next installations.
 main() {
   check_ostype
-  update_pakages
+  update_distro
   setup_required_cli
   setup_zsh
   setup_toolcahins
