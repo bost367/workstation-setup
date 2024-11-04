@@ -6,7 +6,7 @@ export PATH="$PATH:/usr/local/go/bin"
 export XDG_CONFIG_HOME="$HOME/.config"
 export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
 
-# colour palette
+# color palette
 clr_reset=$(tput sgr0)
 clr_bold=$(tput bold)
 clr_cyan="\e[0;36m"
@@ -94,7 +94,7 @@ check_ostype() {
 }
 
 update_distro() {
-  log_info "Update distro ackages (including kernel). It takes some time."
+  log_info "Update distro packages (including kernel). It takes some time."
   # update-distro must be run before drivers installations.
   # Otherwise ignoring distro updating can lead to broken drivers (like wi-fi).
   (sudo apt-get -q update && sudo apt-get -y dist-upgrade) || {
@@ -104,7 +104,7 @@ update_distro() {
   sudo ubuntu-drivers install
   # Installing Complete Multimedia Support.
   # ubuntu-restricted-extras during its installation, offers user to
-  # input in interactive mode licence agreement (it is ttf-mscorefonts-installer requirement).
+  # input in interactive mode license agreement (it is ttf-mscorefonts-installer requirement).
   # To avoid this, writing answer in advance.
   echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections
   sudo apt-get -y install ubuntu-restricted-extras
@@ -151,7 +151,7 @@ EOF
   sudo git clone -q https://github.com/zsh-users/zsh-autosuggestions ${SHARE_FOLDER}/zsh-autosuggestions
   echo "source ${SHARE_FOLDER}/zsh-autosuggestions/zsh-autosuggestions.zsh" >>"${ZDOTDIR:-$HOME}/.zshrc"
 
-  # Enable highliting whilst they are typed at a zsh.
+  # Enable highlighting whilst they are typed at a zsh.
   # This helps in reviewing commands before running them.
   # https://github.com/zsh-users/zsh-syntax-highlighting
   log_info "Install zsh commands highlighting."
@@ -225,7 +225,7 @@ setup_toolcahins() {
 
 setup_neovim() {
   log_info "Install Neovim setup."
-  # apt insltlls old verion of vim. snap conteins fresh release.
+  # apt installs old version of vim. Snap contains fresh release.
   snap install --classic nvim
   report_version nvim
 
@@ -260,7 +260,7 @@ setup_alacritty() {
     git clone -q https://github.com/alacritty/alacritty.git
     cd alacritty || return
     sudo tic -xe alacritty,alacritty-direct extra/alacritty.info
-    rm -rf alacritty
+    cd .. && rm -rf alacritty
   fi
 }
 
@@ -449,7 +449,7 @@ clean_trash() {
   sudo apt-get clean -y
 }
 
-# Order matters: some functions install cli which requered by the next installations.
+# Order matters: some functions install cli which required by the next installations.
 main() {
   check_ostype
   update_distro
