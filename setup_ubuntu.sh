@@ -430,12 +430,20 @@ setup_input_options() {
   dconf write /org/gnome/desktop/input-sources/sources "[('xkb', 'us'), ('xkb', 'ru')]"
 }
 
+setup_rounded_corner() {
+  wget -q -O rounded-window-cornersfxgn.zip https://extensions.gnome.org/extension-data/rounded-window-cornersfxgn.v7.shell-extension.zip
+  gnome-extensions install rounded-window-cornersfxgn.zip
+  gnome-extensions enable rounded-window-corners@fxgn
+  rm rounded-window-cornersfxgn.zip
+}
+
 personalyze_workstation() {
   log_info "Personalyze ui desktop."
   check_if_gnome_environment || return
   setup_desktop_components
   setup_desktop_fonts
   setup_input_options
+  setup_rounded_corner
 }
 
 clean_trash() {
