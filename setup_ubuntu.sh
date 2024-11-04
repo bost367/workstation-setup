@@ -317,7 +317,7 @@ install_docker() {
 
   log_info "Add user to docker group."
   # https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user
-  newgrp docker
+  sudo groupadd docker
   sudo usermod -aG docker "${USER}"
   newgrp docker <<'EOL'
 EOL
