@@ -253,6 +253,7 @@ setup_alacritty() {
   log_info "Install alacritty."
   snap install --classic alacritty
   report_version alacritty
+  make_alacritty_default_terminal
   if [[ ! $(infocmp alacritty) ]]; then
     # https://github.com/alacritty/alacritty/blob/master/INSTALL.md#terminfo
     log_info "alacritty terminfo is not found. Install it."
@@ -261,6 +262,22 @@ setup_alacritty() {
     sudo tic -xe alacritty,alacritty-direct extra/alacritty.info
     rm -rf alacritty
   fi
+}
+
+# https://gist.github.com/aanari/08ca93d84e57faad275c7f74a23975e6?permalink_comment_id=3822304#gistcomment-3822304
+make_alacritty_default_terminal() {
+  log_info "Make alacrutty default terminal."
+  local start_alacritty_script
+  start_alacritty_script="/usr/bin/start-alacritty"
+  cat <<'EOF' | sudo tee "$start_alacritty_script"
+#!/bin/sh
+
+/usr/bin/snap run alacritty
+EOF
+  sudo chown root:root "$start_alacritty_script"
+  sudo chmod --reference=/usr/bin/ls "$start_alacritty_script"
+  sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator "$start_alacritty_script" 50
+  sudo update-alternatives --set x-terminal-emulator "$start_alacritty_script"
 }
 
 setup_tui() {
