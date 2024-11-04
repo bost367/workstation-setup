@@ -249,6 +249,20 @@ setup_neovim() {
   report_version yq
 }
 
+setup_alacritty() {
+  log_info "Install alacritty."
+  snap install --classic alacritty
+  report_version alacritty
+  if [[ ! $(infocmp alacritty) ]]; then
+    # https://github.com/alacritty/alacritty/blob/master/INSTALL.md#terminfo
+    log_info "alacritty terminfo is not found. Install it."
+    git clone -q https://github.com/alacritty/alacritty.git
+    cd alacritty || return
+    sudo tic -xe alacritty,alacritty-direct extra/alacritty.info
+    rm -rf alacritty
+  fi
+}
+
 setup_tui() {
   log_info "Install TUI CLIs."
 
@@ -279,10 +293,6 @@ setup_tui() {
   log_info "Install lazydocker."
   go install github.com/jesseduffield/lazydocker@latest
   report_version lazydocker
-
-  log_info "Install alacritty."
-  snap install --classic alacritty
-  report_version alacritty
 
   log_info "Install btop - better htop."
   snap install btop
@@ -424,10 +434,11 @@ main() {
   setup_required_cli
   setup_zsh
   setup_toolcahins
+  setup_alacritty
+  setup_tui
   setup_neovim
   install_docker
   install_nerd_fonts
-  setup_tui
   install_flatpak
   install_desktop_applications
   personalyze_workstation
