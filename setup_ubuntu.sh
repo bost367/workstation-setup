@@ -50,16 +50,13 @@ link() {
 }
 
 print_to_do_list() {
-  echo "Environment has been setup. Reboot your PC to complete it all."
+  echo "Environment has been setup. Reboot your PC to finish."
   echo "Not all installations is automated. See the next steps to complete setup by your self."
   echo ""
-  echo "${clr_bold}1. Install next desktop application.${clr_reset}"
-  link "  - " "Chrome" "https://www.google.com/chrome"
-  link "  - " "IntelliJ" "https://www.jetbrains.com/idea/download"
-  echo ""
-  echo "${clr_bold}2. Setup identity .gitconfig file.${clr_reset}"
+  echo "${clr_bold}2. Setup .gitconfig file.${clr_reset}"
   echo "  > git config --global user.name \"Name\""
   echo "  > git config --global user.email \"Email\""
+  echo "  > git config --global pull.rebase true"
   echo ""
   echo "${clr_bold}3. Generate ssh key and publish public key on GitHub.${clr_reset}"
   link "  - " "Geenrate ssh key" "https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent#generating-a-new-ssh-key"
@@ -148,14 +145,14 @@ EOF
 
   # https://github.com/zsh-users/zsh-autosuggestions
   log_info "Install zsh commands autocompletition."
-  sudo git clone -q https://github.com/zsh-users/zsh-autosuggestions ${SHARE_FOLDER}/zsh-autosuggestions
+  sudo git clone --depth=1 -q https://github.com/zsh-users/zsh-autosuggestions ${SHARE_FOLDER}/zsh-autosuggestions
   echo "source ${SHARE_FOLDER}/zsh-autosuggestions/zsh-autosuggestions.zsh" >>"${ZDOTDIR:-$HOME}/.zshrc"
 
   # Enable highlighting whilst they are typed at a zsh.
   # This helps in reviewing commands before running them.
   # https://github.com/zsh-users/zsh-syntax-highlighting
   log_info "Install zsh commands highlighting."
-  sudo git clone -q https://github.com/zsh-users/zsh-syntax-highlighting ${SHARE_FOLDER}/zsh-syntax-highlighting
+  sudo git clone --depth=1 -q https://github.com/zsh-users/zsh-syntax-highlighting ${SHARE_FOLDER}/zsh-syntax-highlighting
   echo "source ${SHARE_FOLDER}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >>"${ZDOTDIR:-$HOME}/.zshrc"
 
   report_version zsh
@@ -257,7 +254,7 @@ setup_alacritty() {
   if [[ ! $(infocmp alacritty) ]]; then
     # https://github.com/alacritty/alacritty/blob/master/INSTALL.md#terminfo
     log_info "alacritty terminfo is not found. Install it."
-    git clone -q https://github.com/alacritty/alacritty.git
+    git clone --depth=1 -q https://github.com/alacritty/alacritty.git
     cd alacritty || return
     sudo tic -xe alacritty,alacritty-direct extra/alacritty.info
     cd .. && rm -rf alacritty
@@ -311,6 +308,10 @@ setup_tui() {
   go install github.com/jesseduffield/lazydocker@latest
   report_version lazydocker
 
+  log_info "Install fzf."
+  go install go install github.com/junegunn/fzf@latest
+  report_version fzf
+
   log_info "Install btop - better htop."
   snap install btop
   report_version btop
@@ -352,7 +353,7 @@ EOL
 
 install_nerd_fonts() {
   log_info "Install Nerd Fonts."
-  git clone -q --filter=blob:none --sparse https://github.com/ryanoasis/nerd-fonts.git
+  git clone --depth=1 -q --filter=blob:none --sparse https://github.com/ryanoasis/nerd-fonts.git
   cd nerd-fonts || return
   git sparse-checkout add patched-fonts/JetBrainsMono
   bash install.sh JetBrainsMono
@@ -406,7 +407,7 @@ setup_desktop_components() {
 
 download_fonts() {
   log_info "Download San Francisco fonts."
-  git clone -q https://github.com/sahibjotsaggu/San-Francisco-Pro-Fonts.git
+  git clone --depth=1 -q https://github.com/sahibjotsaggu/San-Francisco-Pro-Fonts.git
   mv San-Francisco-Pro-Fonts "${HOME}/.local/share/fonts/SF_Pro"
 }
 
@@ -435,7 +436,7 @@ setup_rounded_corner() {
 }
 
 personalyze_workstation() {
-  log_info "Personalyze ui desktop."
+  log_info "Personalyze GUI desktop."
   check_if_gnome_environment || return
   setup_desktop_components
   setup_desktop_fonts
