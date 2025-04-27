@@ -1,0 +1,23 @@
+#cloud-config
+
+package_update: true
+package_upgrade: true
+users:
+  - name: exampleuser
+    sudo:
+      - ALL=(ALL) NOPASSWD:ALL
+    groups:
+      - sudo
+    shell: /bin/bash
+    # to generate pwd run: mkpasswd --method=SHA-512 --rounds=500000
+    # hashed_passwd: ""
+    ssh_import_id:
+      - gh:bost367
+write_files:
+  - path: /opt/setup.sh
+    permissions: "0755"
+    source:
+      uri: https://raw.githubusercontent.com/bost367/workstation-setup/refs/heads/main/setup_ubuntu.sh
+runcmd:
+  - cd /home/exampleuser # Homebrew requiriment
+  - sudo -H -u exampleuser bash /opt/setup.sh shell >setup.log
