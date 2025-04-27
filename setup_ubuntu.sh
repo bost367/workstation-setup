@@ -111,11 +111,25 @@ setup_required_cli() {
     curl \
     git \
     wget \
-    cmake
+    cmake \
+    build-essential \
+    procps \
+    file
 
   # wget and curl has verbose output on `--version` command.
   report_version git
   report_version cmake
+}
+
+# Homebrew needs for support multiple OS: Linux & MacOS.
+install_homebrew() {
+  log_info "Install Homebrew."
+  NONINTERACTIVE=1 bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  # https://docs.brew.sh/Tips-and-Tricks#loading-homebrew-from-the-same-dotfiles-on-different-operating-systems
+  command -v brew || export PATH="$PATH:/opt/homebrew/bin:/home/linuxbrew/.linuxbrew/bin:/usr/local/bin"
+  command -v brew && eval "$(brew shellenv)"
+  # https://docs.brew.sh/Analytics
+  brew analytics off
 }
 
 setup_zsh() {
@@ -137,21 +151,27 @@ EOF
   # https://stackoverflow.com/questions/15769615/remove-last-login-message-for-new-tabs-in-terminal
   touch "$HOME/.hushlogin"
 
-  log_info "Make zsh defaul."
-  chsh -s "$(which zsh)"
+  log_info "Make zsh default."
+  sudo chsh -s "$(which zsh)" "$(whoami)"
 
   # https://github.com/zsh-users/zsh-autosuggestions
   log_info "Install zsh commands autocompletition."
   sudo git clone --depth=1 -q https://github.com/zsh-users/zsh-autosuggestions ${SHARE_FOLDER}/zsh-autosuggestions
-  echo "source ${SHARE_FOLDER}/zsh-autosuggestions/zsh-autosuggestions.zsh" >>"${ZDOTDIR:-$HOME}/.zshrc"
 
   # Enable highlighting whilst they are typed at a zsh.
   # This helps in reviewing commands before running them.
   # https://github.com/zsh-users/zsh-syntax-highlighting
   log_info "Install zsh commands highlighting."
   sudo git clone --depth=1 -q https://github.com/zsh-users/zsh-syntax-highlighting ${SHARE_FOLDER}/zsh-syntax-highlighting
-  echo "source ${SHARE_FOLDER}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >>"${ZDOTDIR:-$HOME}/.zshrc"
 
+  cat <<"EOF" >"$ZDOTDIR/.zshrc"
+# Plugins
+source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# Export brew env
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+EOF
   report_version zsh
 }
 
@@ -219,27 +239,26 @@ setup_toolcahins() {
 
 setup_neovim() {
   log_info "Install Neovim setup."
-  # apt installs old version of vim. Snap contains fresh release.
-  snap install --classic nvim
+  brew install -q nvim
   report_version nvim
 
   # Used by Nvim to share OS and Nvim buffers.
   # For more details run `:h clipboard` in nvim.
-  sudo apt-get -y install xclip
+  brew install -q xclip
   # XML formatter.
-  sudo apt-get -y install libxml2-utils
+  brew install -q libxml2
   report_version xmllint
   # Shell linter. Used by bash-language-server.
-  sudo apt-get -y install shellcheck
+  brew install -q shellcheck
   report_version shellcheck
   # Shell formatter.
-  go install mvdan.cc/sh/v3/cmd/shfmt@latest
+  brew install -q shfmt
   report_version shfmt
   # Lua formatter.
-  cargo -q install --locked stylua
+  brew install -q stylua
   report_version stylua
   # YAML file formatter.
-  go install github.com/mikefarah/yq/v4@latest
+  brew install -q yq
   report_version yq
 }
 
@@ -278,39 +297,39 @@ setup_tui() {
   log_info "Install TUI CLIs."
 
   log_info "Install yazi - filemanager."
-  cargo -q install --locked yazi-fm yazi-cli
+  brew install -q yazi
   report_version yazi
 
   log_info "Install zellij - terminal splitter."
-  cargo -q install --locked zellij
+  brew install -q zellij
   report_version zellij
 
   log_info "Install eza - better ls."
-  cargo -q install --locked eza
+  brew install -q eza
   report_version eza
 
   log_info "Install starship - beautify prompt for terminal input."
-  cargo -q install --locked starship
+  brew install -q starship
   report_version starship
 
   log_info "Install git-delta - side by side diff view fo lazygit."
-  cargo -q install --locked git-delta
+  brew install -q git-delta
   report_version delta
 
   log_info "Install lazygit."
-  go install github.com/jesseduffield/lazygit@latest
+  brew install -q lazygit
   report_version lazygit
 
   log_info "Install lazydocker."
-  go install github.com/jesseduffield/lazydocker@latest
+  brew install -q lazydocker
   report_version lazydocker
 
   log_info "Install fzf."
-  go install go install github.com/junegunn/fzf@latest
+  brew install -q fzf
   report_version fzf
 
   log_info "Install btop - better htop."
-  snap install btop
+  brew install -q btop
   report_version btop
 }
 
@@ -448,6 +467,7 @@ clean_trash() {
   log_info "Clean up all mess."
   sudo apt-get autoclean
   sudo apt-get clean -y
+  brew cleanup
 }
 
 # Order matters: some functions install cli which required by the next installations.
