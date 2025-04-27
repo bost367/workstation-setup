@@ -17,6 +17,23 @@ clr_blue_underscore="\033[4;34m"
 # variables
 installed_versions=""
 
+usage() {
+  cat <<EOF
+Description:
+  Ubuntu workstation setup.
+
+Usage:
+  setup_ubuntu.sh [COMMAND]
+
+Commands:
+  shell     Setup shell: ZSH, CLI and TUI applications.
+  desktop   Setup desktop (including shell): drivers, dev enviromnet,
+            desktop applicaitons, GNOME settings and etc.
+            Default command.
+  help      Print help.
+EOF
+}
+
 log_info() {
   echo -e "[$(date +"%F %T")] ${clr_cyan}info:${clr_reset} ${1}" >&2
 }
@@ -470,23 +487,61 @@ clean_trash() {
   brew cleanup
 }
 
-# Order matters: some functions install cli which required by the next installations.
-main() {
-  check_ostype
-  update_distro
+console_interface() {
+  sudo apt-get -q update
   setup_required_cli
+  install_homebrew
   setup_zsh
-  setup_toolcahins
   setup_tui
   setup_neovim
+}
+
+# Order matters: some functions install cli which required by the next installations.
+desktop_interface() {
+  update_distro
+  console_interface
+  setup_toolcahins
   setup_alacritty
   install_docker
   install_nerd_fonts
   install_flatpak
   install_desktop_applications
   personalyze_workstation
-  clean_trash
   print_post_install_message
 }
 
-main
+setup_workstation() {
+  check_ostype
+  "$@"
+  clean_trash
+}
+
+if [[ $# = 0 ]]; then
+  log_info "Install desktop environment."
+  setup_workstation desktop_interface
+elif [ "$#" = 1 ]; then
+  for opt in "$@"; do
+    case "$opt" in
+      help)
+        usage
+        exit 1
+        ;;
+      desktop)
+        log_info "Install desktop environment."
+        setup_workstation desktop_interface
+        ;;
+      shell)
+        log_info "Install shell environment."
+        setup_workstation console_interface
+        ;;
+      *)
+        log_error "Unknown argument."
+        usage
+        exit 1
+    esac
+  done
+else
+  log_error "Too many arguments."
+  usage
+  exit 1
+fi
