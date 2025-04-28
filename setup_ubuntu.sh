@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 export PATH="$PATH:$HOME/.cargo/bin"
 export PATH="$PATH:$HOME/go/bin"
@@ -53,16 +53,13 @@ print_to_do_list() {
   echo "Environment has been setup. Reboot your PC to finish."
   echo "Not all installations is automated. See the next steps to complete setup by your self."
   echo ""
-  echo "${clr_bold}2. Setup .gitconfig file.${clr_reset}"
+  echo "${clr_bold}- Setup .gitconfig file.${clr_reset}"
   echo "  > git config --global user.name \"Name\""
   echo "  > git config --global user.email \"Email\""
   echo "  > git config --global pull.rebase true"
   echo ""
-  echo "${clr_bold}3. Generate ssh key and publish public key on GitHub.${clr_reset}"
+  echo "${clr_bold}- Generate ssh key and publish public key on GitHub.${clr_reset}"
   link "  - " "Geenrate ssh key" "https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent#generating-a-new-ssh-key"
-  echo ""
-  echo "${clr_bold}4. Sync Obsidian vault.${clr_reset}"
-  echo "  -  TBD: describe steps"
 }
 
 print_post_install_message() {
@@ -107,7 +104,7 @@ update_distro() {
   sudo apt-get -y install ubuntu-restricted-extras
 }
 
-# Need to be install primarily: the required by other tools.
+# Need to be install primarily: required by other tools.
 setup_required_cli() {
   log_info "Install required CLIs."
   sudo apt-get -y install \
@@ -372,6 +369,9 @@ install_desktop_applications() {
   flatpak install -y flathub org.telegram.desktop
   flatpak install -y flathub com.getpostman.Postman
   flatpak install -y flathub md.obsidian.Obsidian
+  # Brave flatpack package not yet working as well:
+  # https://brave.com/linux/#flatpak. Can't be set as default browser.
+  snap install brave
 }
 
 check_if_gnome_environment() {
@@ -457,9 +457,9 @@ main() {
   setup_required_cli
   setup_zsh
   setup_toolcahins
-  setup_alacritty
   setup_tui
   setup_neovim
+  setup_alacritty
   install_docker
   install_nerd_fonts
   install_flatpak
