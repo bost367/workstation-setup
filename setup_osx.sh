@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 setup_color() {
   FMT_YELLOW=$(printf '\033[33m')
