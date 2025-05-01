@@ -18,15 +18,15 @@ clr_blue_underscore="\033[4;34m"
 installed_versions=""
 
 log_info() {
-  echo -e "${clr_cyan}info:${clr_reset} ${1}" >&2
+  echo -e "[$(date +"%F %T")] ${clr_cyan}info:${clr_reset} ${1}" >&2
 }
 
 log_warn() {
-  echo -e "${clr_yellow}warn:${clr_reset} ${1}" >&2
+  echo -e "[$(date +"%F %T")] ${clr_yellow}warn:${clr_reset} ${1}" >&2
 }
 
 log_error() {
-  echo -e "${clr_red}error:${clr_reset} ${1}" >&2
+  echo -e "[$(date +"%F %T")] ${clr_red}error:${clr_reset} ${1}" >&2
 }
 
 report_version() {
