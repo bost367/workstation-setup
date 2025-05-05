@@ -17,7 +17,7 @@ write_files:
   - path: /opt/setup.sh
     permissions: "0755"
     source:
-      uri: https://raw.githubusercontent.com/bost367/workstation-setup/refs/heads/main/setup_ubuntu.sh
+      uri: https://raw.githubusercontent.com/bost367/workstation-setup/refs/heads/main/ubuntu/setup.sh
 runcmd:
   - cd /home/exampleuser # Homebrew requiriment
   - sudo -H -u exampleuser bash /opt/setup.sh shell >setup.log
