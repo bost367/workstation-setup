@@ -1,0 +1,58 @@
+keypress_delay_ms: 10
+shared:
+  terminals: &terminals
+    - gnome-terminal-server.Gnome-terminal
+    - Alacritty.Alacritty
+modmap:
+  - name: Swap Alt and Meta (Super)
+    remap:
+      LeftAlt: LeftMeta
+      LeftMeta: LeftAlt
+      RightAlt: RightMeta
+      RightMeta: RightAlt
+keymap:
+  - name: Text editing
+    remap:
+      Super-Left: Home                            # move carriage to start line
+      Super-Right: End                            # move carriage to end line
+      Alt-Right: Ctrl-Right                       # move carriage next word
+      Alt-Left: Ctrl-Left                         # move carriage previous word
+      Shift-Super-Left: Shift-Home                # select text line backward
+      Shift-Super-Right: Shift-End                # select text line forward
+      Super-a: Ctrl-a                             # seleclt all
+      Super-Backspace: Shift-Super-Backspace      # remove line
+      Alt-Backspace: Ctrl-Backspace               # remove word
+      Alt-KEY_DELETE: Ctrl-KEY_DELETE             # remove word after carriage
+  - name: Tab navigation
+    application:
+      not: *terminals
+    remap:
+      Super-t: Ctrl-t   # new tab
+      Super-w: Ctrl-w   # close tab
+      Super-f: Ctrl-f   # search
+      Super-r: Ctrl-r   # refresh
+      Super-l: Ctrl-l   # to fast search in browser
+      Super-1: Ctrl-1
+      Super-2: Ctrl-2
+      Super-3: Ctrl-3
+      Super-4: Ctrl-4
+      Super-5: Ctrl-4
+      Super-6: Ctrl-6
+      Super-7: Ctrl-7
+      Super-8: Ctrl-8
+      Super-9: Ctrl-9
+      Super-0: Ctrl-0
+  - name: Buffer management
+    application:
+      not: *terminals
+    remap:
+      Super-c: Ctrl-c   # copy
+      Super-v: Ctrl-v   # paste
+      Super-x: Ctrl-x   # cut
+      Super-z: Ctrl-z   # undo
+  - name: Shell buffer management
+    application:
+      only: *terminals
+    remap:
+      Super-c: Ctrl-Shift-c   # copy
+      Super-v: Ctrl-Shift-v   # paste
