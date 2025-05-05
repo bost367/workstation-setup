@@ -1,0 +1,36 @@
+keypress_delay_ms: 10
+shared:
+  terminals: &terminals
+    - Gnome-terminal
+    - Alacritty
+keymap:
+  - name: Text editing
+    application:
+      not: *terminals
+    remap:
+      Super-Left: Home                            # move carriage to start line
+      Super-Right: End                            # move carriage to end line
+      Alt-Right: Ctrl-Right                       # move carriage next word
+      Alt-Left: Ctrl-Left                         # move carriage previous word
+      Shift-Super-Left: Shift-Home                # select text line backward
+      Shift-Super-Right: Shift-End                # select text line forward
+      Super-a: Ctrl-a                             # seleclt all
+      Super-Backspace: Shift-Super-Backspace      # remove line
+      Alt-Backspace: Ctrl-Backspace               # remove word
+  - name: Tab navigation
+    application:
+      not: *terminals
+    remap:
+      Super-t: Ctrl-t   # open tab
+      Super-w: Ctrl-w   # close tab
+      Super-f: Ctrl-f   # search
+      Super-r: Ctrl-r   # refresh
+modmap:
+  - name: Swap Alt and Meta (Super)
+    application:
+      not: *terminals
+    remap:
+      LeftAlt: LeftMeta
+      LeftMeta: LeftAlt
+      RightAlt: RightMeta
+      RightMeta: RightAlt

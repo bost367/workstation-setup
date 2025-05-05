@@ -1,0 +1,12 @@
+# Copy
+#"xdotool key --clearmodifiers Control_L+c"
+"xdotool key Control_L+c"
+    m:0x8 + c:54
+    Alt + c
+
+"xdotool getactivewindow key --clearmodifiers Control_L+Left"
+    m:0x8 + c:114
+    Alt + Left
+
+# https://askubuntu.com/questions/1475657/custom-keyboard-shortcuts-for-jumping-to-next-word-or-end-of-line-ubuntu-22-04
+
