@@ -430,6 +430,7 @@ setup_desktop_components() {
   dconf write /org/gnome/shell/extensions/dash-to-dock/show-mounts false
   dconf write /org/gnome/shell/extensions/dash-to-dock/show-mounts-network true
   dconf write /org/gnome/shell/extensions/dash-to-dock/extend-height false
+  dconf write /org/gnome/shell/extensions/dash-to-dock/hot-keys "false"
 
   log_info "Change file explorer settings."
   dconf write /org/gnome/nautilus/icon-view/default-zoom-level "'small'"
