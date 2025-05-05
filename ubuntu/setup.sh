@@ -23,7 +23,7 @@ Description:
   Ubuntu workstation setup.
 
 Usage:
-  setup_ubuntu.sh [COMMAND]
+  setup.sh [COMMAND]
 
 Commands:
   shell     Setup shell: ZSH, CLI and TUI applications.
@@ -200,7 +200,7 @@ install_rust() {
     log_info "Rust is not found. Install it."
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -yq
   fi
-  rustup update
+  rustup -q update
 
   report_version rustup
   report_version cargo
@@ -430,6 +430,7 @@ setup_desktop_components() {
   dconf write /org/gnome/shell/extensions/dash-to-dock/show-mounts false
   dconf write /org/gnome/shell/extensions/dash-to-dock/show-mounts-network true
   dconf write /org/gnome/shell/extensions/dash-to-dock/extend-height false
+  dconf write /org/gnome/shell/extensions/dash-to-dock/hot-keys "false"
 
   log_info "Change file explorer settings."
   dconf write /org/gnome/nautilus/icon-view/default-zoom-level "'small'"
