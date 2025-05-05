@@ -17,6 +17,12 @@ keymap:
       Super-Right: End                            # move carriage to end line
       Alt-Right: Ctrl-Right                       # move carriage next word
       Alt-Left: Ctrl-Left                         # move carriage previous word
+      #Alt-Right:
+      #  launch: [ "/bin/bash", "/home/stepan/workbench/workstation-setup/ubuntu/shorcuts/hack.sh", "right" ]
+      #  launch: [ "xdotool", "key", "--clearmodifiers", "ctrl+Right" ]
+      Alt-Left: Ctrl-Left                         # move carriage previous word
+      # Alt-Left:
+      #   launch: [ "/bin/bash", "/home/stepan/workbench/workstation-setup/ubuntu/shorcuts/hack.sh", "left" ]
       Shift-Super-Left: Shift-Home                # select text line backward
       Shift-Super-Right: Shift-End                # select text line forward
       Super-a: Ctrl-a                             # seleclt all
