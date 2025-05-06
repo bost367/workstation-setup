@@ -6,33 +6,31 @@ osx() {
   # Disable windos upscale, when drop windpw on sreen adge
   dconf write /org/gnome/mutter/edge-tiling "false"
   # Capture the entire screen
-  dconf write /org/gnome/shell/keybindings/screenshot "['<Shift><Alt>3']"
+  dconf write /org/gnome/shell/keybindings/screenshot "['<Shift><Super>3']"
   # Capture a portion of the screen
-  dconf write /org/gnome/shell/keybindings/show-screenshot-ui "['<Shift><Alt>4']"
+  dconf write /org/gnome/shell/keybindings/show-screenshot-ui "['<Shift><Super>4']"
   # Close window
-  dconf write /org/gnome/desktop/wm/keybindings/close "['<Alt>q']"
+  dconf write /org/gnome/desktop/wm/keybindings/close "['<Super>q']"
   # Hide window
-  dconf write /org/gnome/desktop/wm/keybindings/minimize "['<Alt>h']"
+  dconf write /org/gnome/desktop/wm/keybindings/minimize "['<Super>h']"
   # Lock screen
-  dconf write /org/gnome/settings-daemon/plugins/media-keys/screensaver "['<Control><Alt>q']"
+  dconf write /org/gnome/settings-daemon/plugins/media-keys/screensaver "['<Control><Super>q']"
   # Toogle application overview & search
-  dconf write /org/gnome/shell/keybindings/toggle-overview "['<Alt>space']"
+  dconf write /org/gnome/shell/keybindings/toggle-overview "['<Super>space']"
   # Disable search application by [Super]
-  dconf write /org/gnome/mutter/overlay-key "'Super_R'"
+  dconf write /org/gnome/mutter/overlay-key "''"
 
   # Next setting change window switching
-  dconf write /org/gnome/desktop/wm/keybindings/switch-applications "['<Alt>Tab']"
-  dconf write /org/gnome/desktop/wm/keybindings/switch-applications-backward "['<Shift><Alt>Tab']"
-  dconf write /org/gnome/desktop/wm/keybindings/switch-group "['<Alt>Above_Tab']"
-  dconf write /org/gnome/desktop/wm/keybindings/switch-group-backward "['<Shift><Alt>Above_Tab']"
-  dconf write /org/gnome/desktop/wm/keybindings/switch-windows "['']"
-  dconf write /org/gnome/desktop/wm/keybindings/switch-windows-backward "['']"
+  # dconf write /org/gnome/desktop/wm/keybindings/switch-applications "['<Super>Tab']"
+  # dconf write /org/gnome/desktop/wm/keybindings/switch-applications-backward "['<Shift><Super>Tab']"
+  # dconf write /org/gnome/desktop/wm/keybindings/switch-group "['<Super>Above_Tab']"
+  # dconf write /org/gnome/desktop/wm/keybindings/switch-group-backward "['<Shift><Super>Above_Tab']"
+  # dconf write /org/gnome/desktop/wm/keybindings/switch-windows "['']"
+  # dconf write /org/gnome/desktop/wm/keybindings/switch-windows-backward "['']"
 
   # Workspace switching
   # dconf write /org/gnome/desktop/wm/keybindings/switch-to-workspace-right "['<Ctrl>Right']"
   # dconf write /org/gnome/desktop/wm/keybindings/switch-to-workspace-left "['<Ctrl>Left']"
-  # Swap Super and Control keys - per user setting
-  # dconf write /org/gnome/desktop/input-sources xkb-options "'ctrl:swap_lwin_lctl', 'ctrl:swap_rwin_rctl'"
 }
 
 reset() {
