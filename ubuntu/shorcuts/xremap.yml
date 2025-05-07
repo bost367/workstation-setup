@@ -3,6 +3,15 @@ shared:
   terminals: &terminals
     - Gnome-terminal
     - Alacritty
+modmap:
+  - name: Swap Alt and Meta (Super)
+    application:
+      not: *terminals
+    remap:
+      LeftAlt: LeftMeta
+      LeftMeta: LeftAlt
+      RightAlt: RightMeta
+      RightMeta: RightAlt
 keymap:
   - name: Text editing
     application:
@@ -35,12 +44,3 @@ keymap:
       Super-8: Ctrl-8
       Super-9: Ctrl-9
       Super-0: Ctrl-0
-modmap:
-  - name: Swap Alt and Meta (Super)
-    application:
-      not: *terminals
-    remap:
-      LeftAlt: LeftMeta
-      LeftMeta: LeftAlt
-      RightAlt: RightMeta
-      RightMeta: RightAlt
