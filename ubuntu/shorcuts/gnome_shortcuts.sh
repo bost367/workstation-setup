@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 osx() {
   # Disable window menu
@@ -19,6 +19,9 @@ osx() {
   dconf write /org/gnome/shell/keybindings/toggle-overview "['<Super>space']"
   # Disable search application by [Super]
   dconf write /org/gnome/mutter/overlay-key "''"
+  # Switch keyboard language
+  dconf write /org/gnome/desktop/wm/keybindings/switch-input-source "['<Alt>space', ':XF86Keyboard']"
+  dconf write /org/gnome/desktop/wm/keybindings/switch-input-source-backward "['<Shift><Alt>space', '<Shift>XF86Keyboard']"
 
   # Next setting change window switching
   # dconf write /org/gnome/desktop/wm/keybindings/switch-applications "['<Super>Tab']"
@@ -43,6 +46,8 @@ reset() {
   dconf reset /org/gnome/settings-daemon/plugins/media-keys/screensaver
   dconf reset /org/gnome/shell/keybindings/toggle-overview
   dconf reset /org/gnome/mutter/overlay-key
+  dconf reset /org/gnome/desktop/wm/keybindings/switch-input-source
+  dconf reset /org/gnome/desktop/wm/keybindings/switch-input-source-backward
   dconf reset /org/gnome/desktop/wm/keybindings/switch-applications
   dconf reset /org/gnome/desktop/wm/keybindings/switch-applications-backward
   dconf reset /org/gnome/desktop/wm/keybindings/switch-group

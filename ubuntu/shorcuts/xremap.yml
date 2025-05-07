@@ -21,10 +21,20 @@ keymap:
     application:
       not: *terminals
     remap:
-      Super-t: Ctrl-t   # open tab
+      Super-t: Ctrl-t   # new tab
       Super-w: Ctrl-w   # close tab
       Super-f: Ctrl-f   # search
       Super-r: Ctrl-r   # refresh
+      Super-1: Ctrl-1
+      Super-2: Ctrl-2
+      Super-3: Ctrl-3
+      Super-4: Ctrl-4
+      Super-5: Ctrl-4
+      Super-6: Ctrl-6
+      Super-7: Ctrl-7
+      Super-8: Ctrl-8
+      Super-9: Ctrl-9
+      Super-0: Ctrl-0
 modmap:
   - name: Swap Alt and Meta (Super)
     application:
