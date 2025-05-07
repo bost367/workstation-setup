@@ -24,12 +24,12 @@ osx() {
   dconf write /org/gnome/desktop/wm/keybindings/switch-input-source-backward "['<Shift><Alt>space', '<Shift>XF86Keyboard']"
 
   # Next setting change window switching
-  # dconf write /org/gnome/desktop/wm/keybindings/switch-applications "['<Super>Tab']"
-  # dconf write /org/gnome/desktop/wm/keybindings/switch-applications-backward "['<Shift><Super>Tab']"
-  # dconf write /org/gnome/desktop/wm/keybindings/switch-group "['<Super>Above_Tab']"
-  # dconf write /org/gnome/desktop/wm/keybindings/switch-group-backward "['<Shift><Super>Above_Tab']"
-  # dconf write /org/gnome/desktop/wm/keybindings/switch-windows "['']"
-  # dconf write /org/gnome/desktop/wm/keybindings/switch-windows-backward "['']"
+  dconf write /org/gnome/desktop/wm/keybindings/switch-applications "['<Super>Tab']"
+  dconf write /org/gnome/desktop/wm/keybindings/switch-applications-backward "['<Shift><Super>Tab']"
+  dconf write /org/gnome/desktop/wm/keybindings/switch-group "['<Super>Above_Tab']"
+  dconf write /org/gnome/desktop/wm/keybindings/switch-group-backward "['<Shift><Super>Above_Tab']"
+  dconf write /org/gnome/desktop/wm/keybindings/switch-windows "['']"
+  dconf write /org/gnome/desktop/wm/keybindings/switch-windows-backward "['']"
 
   # Workspace switching
   # dconf write /org/gnome/desktop/wm/keybindings/switch-to-workspace-right "['<Ctrl>Right']"
