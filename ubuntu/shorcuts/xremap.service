@@ -1,0 +1,14 @@
+[Unit]
+Description=Xremap
+After=default.target
+
+[Service]
+Type=simple
+#ExecStart=/usr/bin/xremap --watch=device %h/.config/xremap/config.yml
+ExecStart=%h/.cargo/bin/xremap %h/workbench/workstation-setup/ubuntu/shorcuts/xremap.yml
+Restart=always
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=default.target
