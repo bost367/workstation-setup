@@ -1,9 +1,9 @@
-##!/usr/bin/env bash
+#!/usr/bin/env bash
 
-#dconf write /org/gnome/desktop/wm/keybindings/switch-to-workspace-right "['']"
-dconf write /org/gnome/desktop/wm/keybindings/switch-to-workspace-right "['<Ctrl>Right']"
-#xdotool key --window="$(xdotool getactivewindow)" ctrl+Right
+dconf write /org/gnome/desktop/wm/keybindings/switch-to-workspace-right "['']"
 #xdotool key ctrl+Right
+xdotool key --window="$(xdotool getactivewindow)" ctrl+Right
+dconf write /org/gnome/desktop/wm/keybindings/switch-to-workspace-right "['<Ctrl>Right']"
 
 #sleep .3
 #dconf write /org/gnome/desktop/wm/keybindings/switch-to-workspace-right "['<Ctrl>Right']"
