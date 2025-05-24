@@ -12,7 +12,7 @@ osx() {
   # Close window
   dconf write /org/gnome/desktop/wm/keybindings/close "['<Super>q']"
   # Hide window
-  dconf write /org/gnome/desktop/wm/keybindings/minimize "['<Super>h']"
+  dconf write /org/gnome/desktop/wm/keybindings/minimize "['<Super>m']"
   # Lock screen
   dconf write /org/gnome/settings-daemon/plugins/media-keys/screensaver "['<Control><Super>q']"
   # Toogle application overview & search
