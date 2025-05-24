@@ -26,6 +26,7 @@ keymap:
       Super-a: Ctrl-a                             # seleclt all
       Super-Backspace: Shift-Super-Backspace      # remove line
       Alt-Backspace: Ctrl-Backspace               # remove word
+      Alt-KEY_DELETE: Ctrl-KEY_DELETE             # remove word after carriage
   - name: Tab navigation
     application:
       not: *terminals
