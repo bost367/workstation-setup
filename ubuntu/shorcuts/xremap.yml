@@ -19,7 +19,10 @@ keymap:
     remap:
       Super-Left: Home                            # move carriage to start line
       Super-Right: End                            # move carriage to end line
-      Alt-Right: Ctrl-Right                       # move carriage next word
+      #Alt-Right: Ctrl-Right                       # move carriage next word
+      Alt-Right:
+        launch: [ "/bin/bash", "/home/stepan/workbench/workstation-setup/ubuntu/shorcuts/hack.sh" ]
+        #launch: [ "xdotool", "key", "ctrl+Right" ]
       Alt-Left: Ctrl-Left                         # move carriage previous word
       Shift-Super-Left: Shift-Home                # select text line backward
       Shift-Super-Right: Shift-End                # select text line forward
@@ -35,6 +38,7 @@ keymap:
       Super-w: Ctrl-w   # close tab
       Super-f: Ctrl-f   # search
       Super-r: Ctrl-r   # refresh
+      Super-l: Ctrl-l   # to fast search in browser
       Super-1: Ctrl-1
       Super-2: Ctrl-2
       Super-3: Ctrl-3
