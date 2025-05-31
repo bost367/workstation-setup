@@ -1,5 +1,20 @@
 #!/usr/bin/env bash
 
+usage() {
+  cat <<EOF
+Description:
+  Set up Ubuntu keyboard layout to mimic macOS
+
+Usage:
+  main.sh [COMMAND]
+
+Commands:
+  install     Setup shell: ZSH, CLI and TUI applications.
+  uninstall   Setup shell: ZSH, CLI and TUI applications.
+  help        Print help.
+EOF
+}
+
 check_cmd() {
   command -v "$1" >/dev/null 2>&1
 }
@@ -32,7 +47,7 @@ install_xremap() {
 
 # allow start xremap witout sudo
 # https://github.com/xremap/xremap?tab=readme-ov-file#running-xremap-without-sudo
-# reboot reboot PC
+# reboot PC
 grand_uinput_access() {
   user=$(whoami)
   sudo gpasswd -a "$user" input
@@ -72,5 +87,28 @@ uninstall() {
   cargo uninstall xremap --features x11
 }
 
-install
-#uninstall
+if [[ $# = 0 ]]; then
+  usage
+  exit 1
+elif [ "$#" = 1 ]; then
+  for opt in "$@"; do
+    case "$opt" in
+      help)
+        usage
+        ;;
+      install)
+        install
+        ;;
+      uninstall)
+        uninstall
+        ;;
+      *)
+        usage
+        exit 1
+    esac
+  done
+else
+  log_error "Too many arguments."
+  usage
+  exit 1
+fi
