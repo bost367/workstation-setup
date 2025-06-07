@@ -12,10 +12,6 @@ clr_bold=$(tput bold)
 clr_cyan="\e[0;36m"
 clr_yellow="\e[0;33m"
 clr_red="\e[0;31m"
-clr_blue_underscore="\033[4;34m"
-
-# variables
-installed_versions=""
 
 usage() {
   cat <<EOF
@@ -46,40 +42,25 @@ log_error() {
   echo -e "[$(date +"%F %T")] ${clr_red}error:${clr_reset} ${1}" >&2
 }
 
-report_version() {
-  local version
-  if [[ $# = 1 ]]; then
-    version=$(command "$1" "--version" 2>&1)
-  else
-    version=$(command "$1" "$2" 2>&1)
-  fi
-  local cmd_name="${clr_bold}${1}${clr_reset}"
-  installed_versions+="$cmd_name\n$version\n..........\n"
-}
-
-print_version() {
-  log_info "Installed tools:"
-  echo -e "$installed_versions"
-}
-
-link() {
-  echo -e "${1}\e]8;;${3}\a${clr_blue_underscore}${2}${clr_reset}\e]8;;\a"
-}
-
 print_to_do_list() {
-  echo "Environment has been setup. Reboot your PC to finish."
-  echo "Not all installations is automated. See the next steps to complete setup by your self."
-  echo ""
-  echo "${clr_bold}- Setup .gitconfig file.${clr_reset}"
-  echo "  > git config --global user.name \"Name\""
-  echo "  > git config --global user.email \"Email\""
-  echo "  > git config --global pull.rebase true"
-  echo ""
-  echo "${clr_bold}- Generate ssh key and publish public key on GitHub.${clr_reset}"
-  link "  - " "Geenrate ssh key" "https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent#generating-a-new-ssh-key"
+  cat <<EOF
+
+Environment has been setup. Reboot your PC to finish.
+Not all installations is automated.
+See the next steps to complete setup by your self.
+
+${clr_bold}Setup .gitconfig file:${clr_reset}
+> git config --global user.name <Name>
+> git config --global user.email <Email>
+> git config --global pull.rebase true
+
+${clr_bold}Generate ssh key and publish public key on GitHub:${clr_reset}
+  https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent#generating-a-new-ssh-key
+
+EOF
 }
 
-print_post_install_message() {
+verify_docker() {
   log_info "Run docker hello world."
   if [[ $(docker run hello-world) ]]; then
     log_info "docker hello-world runs successfully."
@@ -89,8 +70,6 @@ print_post_install_message() {
   else
     log_warn "docker hello-world faild."
   fi
-  print_version >&2
-  print_to_do_list >&2
 }
 
 check_cmd() {
@@ -100,6 +79,17 @@ check_cmd() {
 check_ostype() {
   if ! uname -a | grep -q "Ubuntu"; then
     log_error "This script aim to be run on Ubuntu distro only."
+    exit 1
+  fi
+}
+
+download() {
+  if check_cmd curl; then
+    curl --proto "=https" --tlsv1.2 --location --silent --show-error --fail "$1"
+  elif check_cmd wget; then
+    wget --https-only --secure-protocol=TLSv1_2 --quiet -O - "$1"
+  else
+    log_error "No curl or wget on your distro were found."
     exit 1
   fi
 }
@@ -121,27 +111,10 @@ update_distro() {
   sudo apt-get -y install ubuntu-restricted-extras
 }
 
-# Need to be install primarily: required by other tools.
-setup_required_cli() {
-  log_info "Install required CLIs."
-  sudo apt-get -y install \
-    curl \
-    git \
-    wget \
-    cmake \
-    build-essential \
-    procps \
-    file
-
-  # wget and curl has verbose output on `--version` command.
-  report_version git
-  report_version cmake
-}
-
 # Homebrew needs for support multiple OS: Linux & MacOS.
 install_homebrew() {
   log_info "Install Homebrew."
-  NONINTERACTIVE=1 bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  NONINTERACTIVE=1 bash -c "$(download https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   # https://docs.brew.sh/Tips-and-Tricks#loading-homebrew-from-the-same-dotfiles-on-different-operating-systems
   command -v brew || export PATH="$PATH:/opt/homebrew/bin:/home/linuxbrew/.linuxbrew/bin:/usr/local/bin"
   command -v brew && eval "$(brew shellenv)"
@@ -149,11 +122,27 @@ install_homebrew() {
   brew analytics off
 }
 
+# Need to be install primarily: required by other tools.
+setup_required_cli() {
+  log_info "Install required cli."
+  brew install -q \
+    curl \
+    git \
+    wget \
+    cmake \
+    unzip \
+    zip \
+    gcc \
+    procps \
+    file
+
+  sudo apt-get -y install build-essential
+}
+
 setup_zsh() {
   log_info "Install zsh."
-  local SHARE_FOLDER="/usr/local/share"
   mkdir -p "${ZDOTDIR}"
-  sudo apt-get -y install zsh
+  brew install -q zsh
 
   # Change default zsh directory. All main files will be stored
   # in custom directory exept .zshenv: it points to .zshrc and
@@ -173,75 +162,58 @@ EOF
 
   # https://github.com/zsh-users/zsh-autosuggestions
   log_info "Install zsh commands autocompletition."
-  sudo git clone --depth=1 -q https://github.com/zsh-users/zsh-autosuggestions ${SHARE_FOLDER}/zsh-autosuggestions
+  brew install -q zsh-autosuggestions
 
   # Enable highlighting whilst they are typed at a zsh.
   # This helps in reviewing commands before running them.
   # https://github.com/zsh-users/zsh-syntax-highlighting
   log_info "Install zsh commands highlighting."
-  sudo git clone --depth=1 -q https://github.com/zsh-users/zsh-syntax-highlighting ${SHARE_FOLDER}/zsh-syntax-highlighting
+  brew install -q zsh-syntax-highlighting
 
-  cat <<"EOF" >"$ZDOTDIR/.zshrc"
+  cat <<EOF >"$ZDOTDIR/.zshrc"
 # Plugins
-source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # Export brew env
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+eval "\$($(brew --prefix)/bin/brew shellenv)"
 EOF
-  report_version zsh
 }
 
 install_rust() {
   log_info "Install Rust."
-  if check_cmd rustup; then
-    log_info "Rust is already installed."
-  else
-    log_info "Rust is not found. Install it."
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -yq
-  fi
+  download https://sh.rustup.rs | sh -s -- -yq
   rustup -q update
-
-  report_version rustup
-  report_version cargo
 }
 
 install_golang() {
   log_info "Install Goalng."
-  local GOLANG_VERSION="1.23.2"
-  local GOLANG_FILE
+  local golang_version="1.23.2"
+  local golang_file
 
   log_info "Download binaries."
-  GOLANG_FILE="go${GOLANG_VERSION}.linux-$(dpkg --print-architecture).tar.gz"
-  wget -q "https://go.dev/dl/${GOLANG_FILE}"
+  golang_file="go${golang_version}.linux-$(dpkg --print-architecture).tar.gz"
+  wget -q "https://go.dev/dl/${golang_file}"
 
   log_info "Remove any previous Go installation and install new one."
-  sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf "${GOLANG_FILE}"
+  sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf "${golang_file}"
 
   log_info "Remove binary."
-  rm "${GOLANG_FILE}"
-
-  report_version go version
+  rm "${golang_file}"
 }
 
 install_java() {
   log_info "Install sdkman - JVM toolchain management."
-  curl -s "https://get.sdkman.io" | bash
+  download "https://get.sdkman.io" | bash
   source "$HOME/.sdkman/bin/sdkman-init.sh"
 
   log_info "Install Java (21.0.5-tem)."
   sdk install java 21.0.5-tem
-
-  report_version sdk version
-  report_version java
 }
 
 install_nodejs() {
   log_info "Install Nodejs and npm."
-  sudo apt-get -y install nodejs
-  sudo apt-get -y install npm
-
-  report_version npm version
+  brew install node
 }
 
 # Such toolchains requires bash/zsh file modification.
@@ -257,32 +229,18 @@ setup_toolcahins() {
 setup_neovim() {
   log_info "Install Neovim setup."
   brew install -q nvim
-  report_version nvim
-
-  # Used by Nvim to share OS and Nvim buffers.
-  # For more details run `:h clipboard` in nvim.
-  brew install -q xclip
-  # XML formatter.
-  brew install -q libxml2
-  report_version xmllint
-  # Shell linter. Used by bash-language-server.
-  brew install -q shellcheck
-  report_version shellcheck
-  # Shell formatter.
-  brew install -q shfmt
-  report_version shfmt
-  # Lua formatter.
-  brew install -q stylua
-  report_version stylua
-  # YAML file formatter.
-  brew install -q yq
-  report_version yq
+  brew install -q xclip      # Used by Nvim to share OS and Nvim buffers (run `:h clipboard` for details)
+  brew install -q libxml2    # XML formatter
+  brew install -q shellcheck # Shell linter. Used by bash-language-server.
+  brew install -q shfmt      # Shell formatter
+  brew install -q stylua     # Lua formatter
+  brew install -q yq         # YAML file formatter
+  brew install -q jq         # JSON file formatter
 }
 
 setup_alacritty() {
   log_info "Install alacritty."
   snap install --classic alacritty
-  report_version alacritty
   make_alacritty_default_terminal
   if [[ ! $(infocmp alacritty) ]]; then
     # https://github.com/alacritty/alacritty/blob/master/INSTALL.md#terminfo
@@ -312,42 +270,17 @@ EOF
 
 setup_tui() {
   log_info "Install TUI CLIs."
-
-  log_info "Install yazi - filemanager."
-  brew install -q yazi
-  report_version yazi
-
-  log_info "Install zellij - terminal splitter."
-  brew install -q zellij
-  report_version zellij
-
-  log_info "Install eza - better ls."
-  brew install -q eza
-  report_version eza
-
-  log_info "Install starship - beautify prompt for terminal input."
-  brew install -q starship
-  report_version starship
-
-  log_info "Install git-delta - side by side diff view fo lazygit."
-  brew install -q git-delta
-  report_version delta
-
-  log_info "Install lazygit."
-  brew install -q lazygit
-  report_version lazygit
-
-  log_info "Install lazydocker."
+  brew install -q yazi      # Filemanager
+  brew install -q zellij    # Terminal splitter
+  brew install -q eza       # Better ls
+  brew install -q starship  # beautify prompt for terminal input
+  brew install -q lazygit   # Git interactive tool
+  brew install -q git-delta # Side by side diff view fo lazygit
+  brew install -q fzf       # Fuzzy finder
+  brew install -q btop      # Better htop
+  brew install -q btop      # Better htop
+  brew install -q cloc      # Project file summary
   brew install -q lazydocker
-  report_version lazydocker
-
-  log_info "Install fzf."
-  brew install -q fzf
-  report_version fzf
-
-  log_info "Install btop - better htop."
-  brew install -q btop
-  report_version btop
 }
 
 # https://docs.docker.com/engine/install/ubuntu/
@@ -374,7 +307,6 @@ install_docker() {
 
   # Install the Docker packages:
   sudo apt-get -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-  report_version docker
 
   log_info "Add user to docker group."
   # https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user
@@ -382,6 +314,7 @@ install_docker() {
   sudo usermod -aG docker "${USER}"
   newgrp docker <<'EOL'
 EOL
+  verify_docker
 }
 
 install_nerd_fonts() {
@@ -490,7 +423,6 @@ clean_trash() {
 
 console_interface() {
   sudo apt-get -q update
-  setup_required_cli
   install_homebrew
   setup_zsh
   setup_tui
@@ -508,7 +440,7 @@ desktop_interface() {
   install_flatpak
   install_desktop_applications
   personalyze_workstation
-  print_post_install_message
+  print_to_do_list >&2
 }
 
 setup_workstation() {
@@ -523,22 +455,23 @@ if [[ $# = 0 ]]; then
 elif [ "$#" = 1 ]; then
   for opt in "$@"; do
     case "$opt" in
-      help)
-        usage
-        exit 1
-        ;;
-      desktop)
-        log_info "Install desktop environment."
-        setup_workstation desktop_interface
-        ;;
-      shell)
-        log_info "Install shell environment."
-        setup_workstation console_interface
-        ;;
-      *)
-        log_error "Unknown argument."
-        usage
-        exit 1
+    help)
+      usage
+      exit 1
+      ;;
+    desktop)
+      log_info "Install desktop environment."
+      setup_workstation desktop_interface
+      ;;
+    shell)
+      log_info "Install shell environment."
+      setup_workstation console_interface
+      ;;
+    *)
+      log_error "Unknown argument."
+      usage
+      exit 1
+      ;;
     esac
   done
 else
