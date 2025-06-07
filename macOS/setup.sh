@@ -36,7 +36,7 @@ console_interface() {
 setup_toolcahins() {
   log_info "Toolchains instalation."
   install_rust
-  #install_golang
+  install_golang
   install_java
   install_nodejs
 }

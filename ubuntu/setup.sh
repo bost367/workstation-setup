@@ -38,22 +38,6 @@ update_distro() {
   sudo apt-get -y install ubuntu-restricted-extras
 }
 
-install_golang() {
-  log_info "Install Goalng."
-  local golang_version="1.23.2"
-  local golang_file
-
-  log_info "Download binaries."
-  golang_file="go${golang_version}.linux-$(dpkg --print-architecture).tar.gz"
-  wget -q "https://go.dev/dl/${golang_file}"
-
-  log_info "Remove any previous Go installation and install new one."
-  sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf "${golang_file}"
-
-  log_info "Remove binary."
-  rm "${golang_file}"
-}
-
 # Such toolchains requires bash/zsh file modification.
 # Toolchains also is used to install bin files
 setup_toolcahins() {

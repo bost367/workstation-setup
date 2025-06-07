@@ -148,6 +148,11 @@ install_rust() {
   rustup -q update
 }
 
+install_golang() {
+  log_info "Install Goalng."
+  brew install -q go
+}
+
 install_java() {
   log_info "Install sdkman - JVM toolchain management."
   download "https://get.sdkman.io" | bash
