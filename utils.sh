@@ -104,8 +104,6 @@ install_required_cli() {
   brew install -q \
     git \
     cmake \
-    unzip \
-    zip \
     procps \
     file
 }

@@ -30,8 +30,8 @@ update_distro() {
     log_error "Update distro is failure."
     exit 1
   }
-  # Required by homebrew during installation.
-  sudo apt-get -y install build-essential curl
+  sudo apt-get -y install build-essential curl # Required by homebrew.
+  sudo apt-get -y install zip unzip            # Required by sdkman.
 }
 
 install_drivers() {
