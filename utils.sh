@@ -88,13 +88,14 @@ EOF
   log_info "Install zsh commands highlighting."
   brew install -q zsh-syntax-highlighting
 
-  cat <<EOF >"$ZDOTDIR/.zshrc"
-# Plugins
-source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+  cat <<'EOF' >"$ZDOTDIR/.zshrc"
+# https://docs.brew.sh/Tips-and-Tricks#load-homebrew-from-the-same-dotfiles-on-different-operating-systems
+command -v brew &> /dev/null || PATH="$PATH:/opt/homebrew/bin:/home/linuxbrew/.linuxbrew/bin:/usr/local/bin"
+command -v brew &> /dev/null && eval "$(brew shellenv)"
 
-# Export brew env
-eval "\$($(brew --prefix)/bin/brew shellenv)"
+# Zsh plugins
+source "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+source "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 EOF
 }
 
