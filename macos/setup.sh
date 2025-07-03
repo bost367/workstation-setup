@@ -68,7 +68,7 @@ install_docker() {
 main() {
   check_ostype "Darwin"
   console_interface
-  setup_toolcahins
+  setup_toolchains
   setup_alacritty
   install_docker
   brew cleanup

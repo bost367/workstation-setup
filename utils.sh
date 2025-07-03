@@ -8,9 +8,9 @@ export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
 # color palette
 clr_reset=$(tput sgr0)
 clr_bold=$(tput bold)
-clr_cyan="\e[0;36m"
-clr_yellow="\e[0;33m"
-clr_red="\e[0;31m"
+clr_cyan=$(tput setaf 6)
+clr_yellow=$(tput setaf 3)
+clr_red=$(tput setaf 1)
 
 log_info() {
   echo -e "[$(date +"%F %T")] ${clr_cyan}info:${clr_reset} ${1}" >&2
@@ -26,7 +26,7 @@ log_error() {
 
 check_ostype() {
   if ! uname -a | grep -q "$1"; then
-    log_error "This script aim to be run on Ubuntu distro only."
+    log_error "This script is designed to run only on $1."
     exit 1
   fi
 }
@@ -37,13 +37,14 @@ check_cmd() {
 
 download() {
   if check_cmd curl; then
-    curl --proto "=https" --tlsv1.2 --location --silent --show-error --fail "$1"
+    curl --proto "=https" --tlsv1.2 --location --silent --show-error --fail "$1" && return 0
   elif check_cmd wget; then
-    wget --https-only --secure-protocol=TLSv1_2 --quiet -O - "$1"
+    wget --https-only --secure-protocol=TLSv1_2 --quiet -O - "$1" && return 0
   else
-    log_error "No curl or wget on your distro were found."
+    log_error "Neither curl nor wget is installed."
     exit 1
   fi
+  return 1
 }
 
 # Homebrew needs for support multiple OS: Linux & MacOS.
@@ -111,34 +112,40 @@ install_required_cli() {
 
 install_tui() {
   log_info "Install TUI CLIs."
-  brew install -q yazi      # Filemanager
-  brew install -q zellij    # Terminal splitter
-  brew install -q eza       # Better ls
-  brew install -q starship  # beautify prompt for terminal input
-  brew install -q lazygit   # Git interactive tool
-  brew install -q git-delta # Side by side diff view fo lazygit
-  brew install -q fzf       # Fuzzy finder
-  brew install -q btop      # Better htop
-  brew install -q bat       # Better cat
-  brew install -q cloc      # Project file summary
-  brew install -q lazydocker
+  local tools=(
+    yazi      # File manager
+    zellij    # Terminal splitter
+    eza       # Better ls
+    starship  # Prompt beautifier
+    lazygit   # Git interactive tool
+    git-delta # Side-by-side diff for lazygit
+    fzf       # Fuzzy finder
+    btop      # Better htop
+    bat       # Better cat
+    cloc      # Project file summary
+    lazydocker
+  )
+  brew install -q "${tools[@]}"
 }
 
 setup_neovim() {
-  log_info "Install Neovim setup."
-  brew install -q nvim
-  brew install -q xclip      # Used by Nvim to share OS and Nvim buffers (run `:h clipboard` for details)
-  brew install -q libxml2    # XML formatter
-  brew install -q shellcheck # Shell linter. Used by bash-language-server.
-  brew install -q shfmt      # Shell formatter
-  brew install -q stylua     # Lua formatter
-  brew install -q yq         # YAML file formatter
-  brew install -q jq         # JSON file formatter
+  log_info "Installing Neovim and related tools (xclip, shellcheck, etc.)."
+  local tools=(
+    nvim
+    xclip      # Used by Nvim to share OS and Nvim buffers (run `:h clipboard` for details)
+    libxml2    # XML formatter
+    shellcheck # Shell linter. Used by bash-language-server.
+    shfmt      # Shell formatter
+    stylua     # Lua formatter
+    yq         # YAML file formatter
+    jq         # JSON file formatter
+  )
+  brew install -q "${tools[@]}"
 }
 
 # Such toolchains requires bash/zsh file modification.
-setup_toolcahins() {
-  log_info "Toolchains instalation."
+setup_toolchains() {
+  log_info "Installing toolchains."
   install_rust
   install_golang
   install_java
@@ -151,7 +158,7 @@ install_rust() {
 }
 
 install_golang() {
-  log_info "Install Goalng."
+  log_info "Installing Goalng."
   brew install -q go
 }
 
@@ -175,17 +182,16 @@ install_nodejs() {
 print_to_do_list() {
   cat <<EOF
 
-Environment has been setup. Reboot your PC to finish.
-Not all installations is automated.
-See the next steps to complete setup by your self.
+Environment setup complete. Reboot your PC to apply changes.
+Additional steps to complete manually:
 
 ${clr_bold}Setup .gitconfig file:${clr_reset}
 > git config --global user.name <Name>
 > git config --global user.email <Email>
 > git config --global pull.rebase true
 
-${clr_bold}Generate ssh key and publish public key on GitHub:${clr_reset}
-  https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent#generating-a-new-ssh-key
+${clr_bold}Generate SSH key for GitHub:${clr_reset}
+  Follow instructions at: https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent#generating-a-new-ssh-key
 
 EOF
 }
