@@ -15,10 +15,10 @@ Usage:
 
 Commands:
   shell     Setup shell: ZSH, CLI and TUI applications.
-  desktop   Setup desktop (including shell): drivers, dev enviromnet,
-            desktop applicaitons, GNOME settings and etc.
+  desktop   Setup desktop (including shell): drivers, dev environment,
+            desktop applications, GNOME settings and etc.
             Default command.
-  help      Print help.
+  help      Displays this help message.
 EOF
 }
 
@@ -27,7 +27,7 @@ update_distro() {
   # update-distro must be run before drivers installations.
   # Otherwise ignoring distro updating can lead to broken drivers (like wi-fi).
   (sudo apt-get -q update && sudo apt-get -y dist-upgrade) || {
-    log_error "Update distro is failure."
+    log_error "Failed to update distribution."
     exit 1
   }
   sudo apt-get -y install build-essential curl # Required by homebrew.
@@ -46,7 +46,7 @@ install_drivers() {
 }
 
 # https://gist.github.com/aanari/08ca93d84e57faad275c7f74a23975e6?permalink_comment_id=3822304#gistcomment-3822304
-make_alacritty_default_terminal() {
+set_alacritty_as_default_terminal() {
   log_info "Make alacrutty default terminal."
   local start_alacritty_script="/usr/bin/start-alacritty"
   cat <<'EOF' | sudo tee "$start_alacritty_script"
@@ -63,16 +63,15 @@ EOF
 install_nerd_fonts() {
   log_info "Install Nerd Fonts."
   git clone --depth=1 -q --filter=blob:none --sparse https://github.com/ryanoasis/nerd-fonts.git
-  cd nerd-fonts || return
-  git sparse-checkout add patched-fonts/JetBrainsMono
-  bash install.sh JetBrainsMono
-  cd .. && rm -rf nerd-fonts
+  git -C nerd-fonts sparse-checkout add patched-fonts/JetBrainsMono
+  bash nerd-fonts/install.sh JetBrainsMono
+  rm -rf nerd-fonts
 }
 
 setup_alacritty() {
   log_info "Install alacritty."
   snap install --classic alacritty
-  make_alacritty_default_terminal
+  set_alacritty_as_default_terminal
   if [[ ! $(infocmp alacritty) ]]; then
     # https://github.com/alacritty/alacritty/blob/master/INSTALL.md#terminfo
     log_info "alacritty terminfo is not found. Install it."
@@ -85,14 +84,14 @@ setup_alacritty() {
 }
 
 verify_docker() {
-  log_info "Run docker hello world."
-  if [[ $(docker run hello-world) ]]; then
-    log_info "docker hello-world runs successfully."
-  elif [[ $(sudo docker run hello-world) ]]; then
-    log_warn "Docker requeres root access."
-    log_warn "See post-installation steps in docker setup guide to fix in."
+  log_info "Running Docker hello-world test."
+  if docker run --rm hello-world >/dev/null 2>&1; then
+    log_info "Docker hello-world ran successfully."
+  elif sudo docker run --rm hello-world >/dev/null 2>&1; then
+    log_warn "Docker requires root access."
+    log_warn "See https://docs.docker.com/engine/install/linux-postinstall/ for non-root setup."
   else
-    log_warn "docker hello-world faild."
+    log_warn "Docker hello-world test failed."
   fi
 }
 
@@ -156,6 +155,8 @@ check_if_gnome_environment() {
   fi
 }
 
+# Configures GNOME desktop settings, including theme, dock, file explorer, and desktop icons.
+# Assumes GNOME shell is installed and dconf is available.
 setup_desktop_components() {
   log_info "Switch dark theme."
   dconf write /org/gnome/desktop/interface/color-scheme "'prefer-dark'"
@@ -209,7 +210,7 @@ setup_rounded_corner() {
   rm rounded-window-cornersfxgn.zip
 }
 
-personalyze_workstation() {
+personalize_workstation() {
   log_info "Personalyze GUI desktop."
   check_if_gnome_environment || return
   setup_desktop_components
@@ -218,14 +219,14 @@ personalyze_workstation() {
   setup_rounded_corner
 }
 
-clean_trash() {
-  log_info "Clean up all mess."
+cleanup_trash() {
+  log_info "Cleaning up temporary files and package caches."
   sudo apt-get autoclean
   sudo apt-get clean -y
   brew cleanup
 }
 
-console_interface() {
+setup_shell_environment() {
   install_homebrew
   install_required_cli
   setup_zsh
@@ -234,10 +235,10 @@ console_interface() {
 }
 
 # Order matters: some functions install cli which required by the next installations.
-desktop_interface() {
+setup_desktop_environment() {
   install_drivers
-  console_interface
-  setup_toolcahins
+  setup_shell_environment
+  setup_toolchains
   setup_alacritty
   install_docker
   install_flatpak
@@ -249,35 +250,33 @@ setup_workstation() {
   check_ostype "Ubuntu"
   update_distro
   "$@"
-  clean_trash
+  cleanup_trash
   print_to_do_list >&2
 }
 
 if [[ $# = 0 ]]; then
   log_info "Install desktop environment."
-  setup_workstation desktop_interface
+  setup_workstation setup_desktop_environment
 elif [ "$#" = 1 ]; then
-  for opt in "$@"; do
-    case "$opt" in
-    help)
-      usage
-      exit 1
-      ;;
-    desktop)
-      log_info "Install desktop environment."
-      setup_workstation desktop_interface
-      ;;
-    shell)
-      log_info "Install shell environment."
-      setup_workstation console_interface
-      ;;
-    *)
-      log_error "Unknown argument."
-      usage
-      exit 1
-      ;;
-    esac
-  done
+  case "$1" in
+  help)
+    usage
+    exit 0
+    ;;
+  desktop)
+    log_info "Installing desktop environment."
+    setup_workstation setup_desktop_environment
+    ;;
+  shell)
+    log_info "Installing shell environment."
+    setup_workstation setup_shell_environment
+    ;;
+  *)
+    log_error "Unknown argument: $1"
+    usage
+    exit 1
+    ;;
+  esac
 else
   log_error "Too many arguments."
   usage
