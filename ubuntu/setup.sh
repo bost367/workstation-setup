@@ -183,8 +183,7 @@ setup_desktop_components() {
 
 download_fonts() {
   log_info "Download San Francisco fonts."
-  git clone --depth=1 -q https://github.com/sahibjotsaggu/San-Francisco-Pro-Fonts.git
-  mv San-Francisco-Pro-Fonts "${HOME}/.local/share/fonts/SF_Pro"
+  git clone --depth=1 -q https://github.com/sahibjotsaggu/San-Francisco-Pro-Fonts.git "${HOME}/.local/share/fonts/SF_Pro"
 }
 
 setup_desktop_fonts() {
