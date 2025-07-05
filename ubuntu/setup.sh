@@ -242,7 +242,7 @@ setup_desktop_environment() {
   install_docker
   install_flatpak
   install_desktop_applications
-  personalyze_workstation
+  personalize_workstation
 }
 
 setup_workstation() {
