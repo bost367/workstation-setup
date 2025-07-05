@@ -30,8 +30,8 @@ update_distro() {
     log_error "Failed to update distribution."
     exit 1
   }
-  sudo apt-get -y install build-essential curl # Required by homebrew.
-  sudo apt-get -y install zip unzip            # Required by sdkman.
+  sudo apt-get -y install build-essential curl git # Required by homebrew.
+  sudo apt-get -y install zip unzip                # Required by sdkman.
 }
 
 install_drivers() {
