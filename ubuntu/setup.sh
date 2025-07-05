@@ -63,7 +63,7 @@ EOF
 install_nerd_fonts() {
   log_info "Install Nerd Fonts."
   git clone --depth=1 -q --filter=blob:none --sparse https://github.com/ryanoasis/nerd-fonts.git
-  git -C nerd-fonts sparse-checkout add patched-fonts/JetBrainsMono
+  git -C nerd-fonts sparse-checkout add -q patched-fonts/JetBrainsMono
   bash nerd-fonts/install.sh JetBrainsMono
   rm -rf nerd-fonts
 }
