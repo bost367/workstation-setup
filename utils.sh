@@ -55,6 +55,7 @@ install_homebrew() {
   command -v brew || export PATH="$PATH:/opt/homebrew/bin:/home/linuxbrew/.linuxbrew/bin:/usr/local/bin"
   command -v brew && eval "$(brew shellenv)"
   # https://docs.brew.sh/Analytics
+  command -v brew || exit 0
   brew analytics off
 }
 
