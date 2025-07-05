@@ -104,7 +104,6 @@ EOF
 install_required_cli() {
   log_info "Install required cli."
   brew install -q \
-    git \
     cmake \
     procps \
     file
