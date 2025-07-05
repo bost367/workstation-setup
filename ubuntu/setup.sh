@@ -30,8 +30,8 @@ update_distro() {
     log_error "Failed to update distribution."
     exit 1
   }
-  sudo apt-get -y install build-essential curl # Required by homebrew.
-  sudo apt-get -y install zip unzip            # Required by sdkman.
+  sudo apt-get -y install build-essential curl git # Required by homebrew.
+  sudo apt-get -y install zip unzip                # Required by sdkman.
 }
 
 install_drivers() {
@@ -83,18 +83,6 @@ setup_alacritty() {
   install_nerd_fonts
 }
 
-verify_docker() {
-  log_info "Running Docker hello-world test."
-  if docker run --rm hello-world >/dev/null 2>&1; then
-    log_info "Docker hello-world ran successfully."
-  elif sudo docker run --rm hello-world >/dev/null 2>&1; then
-    log_warn "Docker requires root access."
-    log_warn "See https://docs.docker.com/engine/install/linux-postinstall/ for non-root setup."
-  else
-    log_warn "Docker hello-world test failed."
-  fi
-}
-
 # https://docs.docker.com/engine/install/ubuntu/
 install_docker() {
   log_info "Install Docker."
@@ -125,9 +113,6 @@ install_docker() {
   # https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user
   sudo groupadd docker
   sudo usermod -aG docker "${USER}"
-  newgrp docker <<'EOL'
-EOL
-  verify_docker
 }
 
 install_flatpak() {
@@ -242,7 +227,7 @@ setup_desktop_environment() {
   install_docker
   install_flatpak
   install_desktop_applications
-  personalyze_workstation
+  personalize_workstation
 }
 
 setup_workstation() {
