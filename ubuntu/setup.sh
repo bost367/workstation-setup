@@ -123,13 +123,13 @@ install_flatpak() {
 }
 
 install_desktop_applications() {
-  log_info "Install Desktop application."
+  log_info "Install Desktop applications."
   flatpak install -y flathub org.telegram.desktop
-  flatpak install -y flathub md.obsidian.Obsidian
   # Brave flatpack package not yet working as well:
   # https://brave.com/linux/#flatpak. Can't be set as default browser.
   sudo snap install brave
   sudo snap install postman
+  sudo snap install telegram-desktop
 }
 
 check_if_gnome_environment() {
