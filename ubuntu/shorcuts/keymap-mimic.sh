@@ -11,12 +11,12 @@ Description:
   Set up Ubuntu keyboard layout to mimic macOS
 
 Usage:
-  keymap-mimik.sh [COMMAND]
+  keymap-mimic.sh [COMMAND]
 
 Commands:
   install     Change Ubuntu keymap to match macOS
   uninstall   Return keymap to default settings
-  help        Print help
+  help        Displays this help message
 EOF
 }
 
@@ -52,7 +52,7 @@ The current GNOME Shell (version $shell_version) is unsupported. You may bypass 
 editing the script yourself, but keep in mind that the script was tested only with version 46.
 
 EOF
-  exit 1
+    exit 1
   fi
 }
 
@@ -77,6 +77,7 @@ install_systemd_service() {
   echo "Install systemd service"
   mkdir -p "$XDG_CONFIG_HOME/xremap"
   cp config.yml "$XDG_CONFIG_HOME/xremap/"
+  mkdir -p "$XDG_CONFIG_HOME/systemd/user/"
   cp xremap.service "$XDG_CONFIG_HOME/systemd/user/"
   systemctl --user daemon-reload
   systemctl --user start xremap.service
@@ -111,22 +112,22 @@ if [[ $# = 0 ]]; then
   usage
   exit 1
 elif [ "$#" = 1 ]; then
-  for opt in "$@"; do
-    case "$opt" in
-      help)
-        usage
-        ;;
-      install)
-        install
-        ;;
-      uninstall)
-        uninstall
-        ;;
-      *)
-        usage
-        exit 1
-    esac
-  done
+  case "$1" in
+  help)
+    usage
+    exit 0
+    ;;
+  install)
+    install
+    ;;
+  uninstall)
+    uninstall
+    ;;
+  *)
+    usage
+    exit 1
+    ;;
+  esac
 else
   log_error "Too many arguments."
   usage
