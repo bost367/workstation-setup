@@ -45,6 +45,16 @@ install_drivers() {
   sudo apt-get -y install ubuntu-restricted-extras
 }
 
+# Zsh from Homebrew not fully compatible for Ubuntu distro.
+# https://unix.stackexchange.com/a/685000
+install_zsh() {
+  log_info "Installing zsh."
+  sudo apt-get -y install zsh
+  log_info "Set Zsh as default shell."
+  sudo chsh -s "$(which zsh)" "$(whoami)"
+  setup_zsh
+}
+
 # https://gist.github.com/aanari/08ca93d84e57faad275c7f74a23975e6?permalink_comment_id=3822304#gistcomment-3822304
 set_alacritty_as_default_terminal() {
   log_info "Make alacrutty default terminal."
@@ -213,7 +223,7 @@ cleanup_trash() {
 setup_shell_environment() {
   install_homebrew
   install_required_cli
-  setup_zsh
+  install_zsh
   install_tui
   setup_neovim
 }

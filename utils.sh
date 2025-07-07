@@ -59,9 +59,8 @@ install_homebrew() {
 }
 
 setup_zsh() {
-  log_info "Install zsh."
+  log_info "Setup zsh."
   mkdir -p "${ZDOTDIR}"
-  brew install -q zsh
 
   # Change default zsh directory. All main files will be stored
   # in custom directory exept .zshenv: it points to .zshrc and
@@ -75,9 +74,6 @@ EOF
   # https://askubuntu.com/questions/1492841/how-to-disable-daily-message-in-ubuntu-22-04-3-lts-message-of-the-day-motd
   # https://stackoverflow.com/questions/15769615/remove-last-login-message-for-new-tabs-in-terminal
   touch "$HOME/.hushlogin"
-
-  log_info "Make zsh default."
-  sudo chsh -s "$(which zsh)" "$(whoami)"
 
   # https://github.com/zsh-users/zsh-autosuggestions
   log_info "Install zsh commands autocompletition."
