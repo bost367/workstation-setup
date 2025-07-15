@@ -32,8 +32,6 @@ install_macos_tui() {
     k9s
     helm
     kubernetes-cli
-    graphviz
-    plantuml
   )
   brew install -q "${tools[@]}"
 }
