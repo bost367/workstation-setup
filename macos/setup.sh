@@ -51,6 +51,9 @@ setup_alacritty() {
   brew install -q --cask \
     alacritty \
     font-jetbrains-mono-nerd-font
+  # Run Alacritty as not authorized application with apple.
+  # https://github.com/alacritty/alacritty/issues/6500#issuecomment-2399558282
+  xattr -dr com.apple.quarantine "/Applications/Alacritty.app"
 }
 
 # Installs Docker CLI and Compose plugin.
