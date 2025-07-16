@@ -2,7 +2,7 @@
 
 set -u
 
-# shellcheck source=utils.sh
+# shellcheck source=../utils.sh
 source <(wget --https-only --secure-protocol=TLSv1_2 -qO - https://raw.githubusercontent.com/bost367/workstation-setup/refs/heads/main/utils.sh)
 
 usage() {
