@@ -2,8 +2,12 @@
 
 set -u
 
+# Process substitution (source<(...)) not work wit macos bash verison.
+utils_script=$(mktemp -t "$(basename "$0")")
+curl --proto "=https" --tlsv1.2 -sSfl -o "$utils_script" https://raw.githubusercontent.com/bost367/workstation-setup/refs/heads/main/utils.sh
 # shellcheck source=utils.sh
-source <(curl --proto "=https" --tlsv1.2 -sSfl https://raw.githubusercontent.com/bost367/workstation-setup/refs/heads/main/utils.sh)
+source "$utils_script"
+rm "$utils_script"
 
 suggest_desktop_applications() {
   cat <<EOF
