@@ -30,8 +30,11 @@ update_distro() {
     log_error "Failed to update distribution."
     exit 1
   }
-  sudo apt-get -y install build-essential curl git # Required by homebrew.
-  sudo apt-get -y install zip unzip                # Required by sdkman.
+  # Required by Homebrew.
+  # https://docs.brew.sh/Homebrew-on-Linux#requirements
+  sudo apt-get -y install build-essential procps curl file git
+  # Required by sdkman.
+  sudo apt-get -y install zip unzip
 }
 
 install_drivers() {
@@ -222,7 +225,6 @@ cleanup_trash() {
 
 setup_shell_environment() {
   install_homebrew
-  install_required_cli
   install_zsh
   install_tui
   setup_neovim

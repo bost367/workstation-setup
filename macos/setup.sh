@@ -42,7 +42,6 @@ install_macos_tui() {
 
 setup_shell_environment() {
   install_homebrew
-  install_required_cli
   setup_zsh
   install_tui
   install_macos_tui
