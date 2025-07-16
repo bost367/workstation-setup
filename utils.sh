@@ -50,6 +50,11 @@ download() {
 # Homebrew needs for support multiple OS: Linux & MacOS.
 install_homebrew() {
   log_info "Install Homebrew."
+  # Because of NONINTERACTIVE variable is set, homebrew script
+  # skips installation if user has no sudo acess. So sudo session
+  # must be start before running the installer.
+  # https://github.com/orgs/Homebrew/discussions/4311#discussioncomment-5240151
+  sudo echo "hello"
   NONINTERACTIVE=1 bash -c "$(download https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   # https://docs.brew.sh/Tips-and-Tricks#loading-homebrew-from-the-same-dotfiles-on-different-operating-systems
   command -v brew || export PATH="$PATH:/opt/homebrew/bin:/home/linuxbrew/.linuxbrew/bin:/usr/local/bin"
