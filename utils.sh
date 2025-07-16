@@ -96,15 +96,6 @@ source "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.z
 EOF
 }
 
-# Required by other tools.
-install_required_cli() {
-  log_info "Install required cli."
-  brew install -q \
-    cmake \
-    procps \
-    file
-}
-
 install_tui() {
   log_info "Install TUI CLIs."
   local tools=(
