@@ -45,7 +45,7 @@ check_if_gnome_environment() {
   shell_version_out=$(gnome-shell --version)
   if [[ $shell_version_out =~ GNOME\ Shell\ ([0-9]+) ]]; then
     shell_version=${BASH_REMATCH[1]}
-    if [[ $shell_version == 46 ]]; then return; fi
+    if [[ $shell_version -ge 46 ]]; then return; fi
     cat <<EOF >&2
 
 The current GNOME Shell (version $shell_version) is unsupported. You may bypass this check by
@@ -96,6 +96,7 @@ install() {
   grand_uinput_access
   install_systemd_service
   switch_macos_keymap
+  echo "Keyboard layout remapped to macOS style."
 }
 
 uninstall() {
@@ -106,6 +107,7 @@ uninstall() {
   systemctl --user daemon-reload
   cargo uninstall -q xremap
   switch_gnome_keymap
+  echo "Keyboard layout reset to default settings."
 }
 
 if [[ $# = 0 ]]; then
