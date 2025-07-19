@@ -140,9 +140,9 @@ install_desktop_applications() {
   flatpak install -y flathub org.telegram.desktop
   # Brave flatpack package not yet working as well:
   # https://brave.com/linux/#flatpak. Can't be set as default browser.
+  curl -fsS https://dl.brave.com/install.sh | sh
   sudo snap install brave
   sudo snap install postman
-  sudo snap install telegram-desktop
 }
 
 check_if_gnome_environment() {
