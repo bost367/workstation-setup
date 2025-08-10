@@ -111,6 +111,8 @@ install_tui() {
     lazygit   # Git interactive tool
     git-delta # Side-by-side diff for lazygit
     fzf       # Fuzzy finder
+    fd        # Better file
+    ripgrep   # Better grep
     btop      # Better htop
     bat       # Better cat
     cloc      # Project file summary
