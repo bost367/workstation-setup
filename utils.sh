@@ -125,13 +125,14 @@ setup_neovim() {
   log_info "Installing Neovim and related tools (xclip, shellcheck, etc.)."
   local tools=(
     nvim
-    xclip      # Used by Nvim to share OS and Nvim buffers (run `:h clipboard` for details)
-    libxml2    # XML formatter
-    shellcheck # Shell linter. Used by bash-language-server.
-    shfmt      # Shell formatter
-    stylua     # Lua formatter
-    yq         # YAML file formatter
-    jq         # JSON file formatter
+    xclip           # Used by Nvim to share OS and Nvim buffers (run `:h clipboard` for details)
+    libxml2         # XML formatter
+    shellcheck      # Shell linter. Used by bash-language-server.
+    shfmt           # Shell formatter
+    stylua          # Lua formatter
+    yq              # YAML file formatter
+    jq              # JSON file formatter
+    tree-sitter-cli # Syntax highlighting
   )
   brew install -q "${tools[@]}"
 }
