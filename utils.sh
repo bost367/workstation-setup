@@ -144,6 +144,7 @@ setup_toolchains() {
   install_golang
   install_java
   install_nodejs
+  install_pyton
 }
 
 install_rust() {
@@ -171,6 +172,11 @@ install_java() {
 install_nodejs() {
   log_info "Install Nodejs and npm."
   brew install -q node
+}
+
+install_pyton() {
+  log_info "Install python."
+  brew install -q python3 uv
 }
 
 print_to_do_list() {
