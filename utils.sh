@@ -185,11 +185,6 @@ print_to_do_list() {
 Environment setup complete. Reboot your PC to apply changes.
 Additional steps to complete manually:
 
-${clr_bold}Setup .gitconfig file:${clr_reset}
-> git config --global user.name <Name>
-> git config --global user.email <Email>
-> git config --global pull.rebase true
-
 ${clr_bold}Generate SSH key for GitHub:${clr_reset}
   Follow instructions at: https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent#generating-a-new-ssh-key
 
