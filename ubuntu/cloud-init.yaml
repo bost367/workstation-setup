@@ -12,12 +12,12 @@ users:
     # to generate pwd run: mkpasswd --method=SHA-512 --rounds=500000
     # hashed_passwd: ""
     ssh_import_id:
-      - gh:bost367
+      - gh:stepankv
 write_files:
   - path: /opt/setup.sh
     permissions: "0755"
     source:
-      uri: https://raw.githubusercontent.com/bost367/workstation-setup/refs/heads/main/ubuntu/setup.sh
+      uri: https://raw.githubusercontent.com/stepankv/workstation-setup/refs/heads/main/ubuntu/setup.sh
 runcmd:
   - cd /home/exampleuser # Homebrew requiriment
   - sudo -H -u exampleuser bash /opt/setup.sh shell >setup.log
