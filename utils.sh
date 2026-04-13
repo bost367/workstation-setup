@@ -117,6 +117,7 @@ install_tui() {
     bat       # Better cat
     cloc      # Project file summary
     lazydocker
+    just
   )
   brew install -q "${tools[@]}"
 }
