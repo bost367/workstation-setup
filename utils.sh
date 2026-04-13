@@ -134,6 +134,7 @@ setup_neovim() {
     yq              # YAML file formatter
     jq              # JSON file formatter
     tree-sitter-cli # Syntax highlighting
+    nixfmt          # nix language formatter
   )
   brew install -q "${tools[@]}"
 }
